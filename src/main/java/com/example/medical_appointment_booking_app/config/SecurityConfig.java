@@ -39,8 +39,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/logout").authenticated()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()  // Cho phép truy cập vào thư mục uploads
-                        .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/v1/librarian").hasAnyAuthority("ROLE_LIBRARIAN")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)

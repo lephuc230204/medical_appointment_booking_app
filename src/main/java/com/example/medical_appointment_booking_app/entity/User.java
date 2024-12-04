@@ -49,12 +49,13 @@ public class User implements UserDetails {
     public String getPassword() {
         return password;
     }
+
     public String getEmail(){
         return email;
     }
 
     @Override
-    public String getUsername() { return email; }
+    public String getUsername() { return username; }
 
     @Override
     public boolean isAccountNonExpired() {
