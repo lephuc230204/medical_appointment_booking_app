@@ -21,6 +21,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
@@ -90,4 +91,21 @@ public class AuthServiceImpl implements AuthService {
         return new ResponseData<>(200, "User {} registered successfully, pls check email to confirm OTP. Thanks!", user.getEmail());
     }
 
+
+    @Override
+    public ResponseData<String> confirmUser(long userId, String otpCode) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Check if the OTP matches
+        if (!otpCode.equals(user.getOtp())) {
+            log.error("OTP does not match for userId={}", userId);
+            throw new IllegalArgumentException("OTP is incorrect");
+        }
+
+        user.setStatus(User.Status.ACTIVE);
+        user.setSetCreatedDate(LocalDate.now());
+        userRepository.save(user);
+        return new ResponseData<>(200, "confirm successfully");
+    }
 }

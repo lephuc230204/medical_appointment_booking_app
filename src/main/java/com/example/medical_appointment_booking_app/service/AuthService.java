@@ -10,4 +10,5 @@ public interface AuthService {
     AuthDto login(SignInForm form);
     ResponseData<String> register(SignUpForm form);
 //    ResponseData<String> logout(HttpServletRequest request, HttpServletResponse response);
+    ResponseData<String> confirmUser(long userId, String otpCode);
 }
