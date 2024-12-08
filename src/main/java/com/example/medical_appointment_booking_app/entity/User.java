@@ -34,8 +34,10 @@ public class User implements UserDetails {
     private LocalDate dob;
     private String username;
     private String phoneNumber;
+    @Enumerated(EnumType.STRING)
     private Status status;
     private String otp;
+    private LocalDate setCreatedDate;
     public enum Status {
         ACTIVE, NONACTIVE, DELETED
     }
