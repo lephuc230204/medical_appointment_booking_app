@@ -43,11 +43,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthDto login(SignInForm form) {
+        // Kiểm tra xem người dùng có tồn tại không
         User user = userRepository.findByEmail(form.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + form.getEmail()));
 
-        if (!user.isEnabled()) {throw new IllegalArgumentException("Account is not active");}
-
+        if (!user.getStatus().equals(User.Status.ACTIVE)) {
+            throw new IllegalArgumentException("Account is not active");
+        }
+        // Thực hiện xác thực
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
@@ -61,8 +64,10 @@ public class AuthServiceImpl implements AuthService {
         log.info("User {} logged in successfully with ", user.getEmail());
         String status = "success";
         String result = "Login successful";
+
         return AuthDto.from(user, accessToken, status, result);
     }
+
     @Override
     public ResponseData<String> register(SignUpForm form){
         if (userRepository.existsByEmail(form.getEmail())) {
