@@ -27,7 +27,7 @@ public class JwtProvider {
         return JWT.create()
                 .withExpiresAt(Instant.now().plusMillis(jwtProperties.getKeyExpiresAt()))
                 .withSubject(auth.getName())
-                .withClaim("role",auth.getAuthorities().stream()
+                .withClaim("role", auth.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .findFirst().orElse(null))
                 .sign(Algorithm.HMAC512(jwtProperties.getPrivateKey()));
