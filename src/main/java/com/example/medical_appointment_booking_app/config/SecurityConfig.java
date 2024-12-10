@@ -6,6 +6,7 @@ import com.example.medical_appointment_booking_app.service.impl.UserDetailsServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,6 +30,12 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
+    // Tạo danh sách các API nằm trong whitelist
+    private static final String[] WHITELISTED_USER = {
+            "/api/v1/auth/**",
+            "/uploads/**",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -36,9 +43,9 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/v1/auth/logout").authenticated()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()  // Cho phép truy cập vào thư mục uploads
+                        .requestMatchers(WHITELISTED_USER).permitAll() // Cho phép các URL trong whitelist
+                        .requestMatchers(HttpMethod.POST,"/api/v1/products/**").hasAnyAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/v1/users/**").hasAnyAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
@@ -74,3 +81,4 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
+
