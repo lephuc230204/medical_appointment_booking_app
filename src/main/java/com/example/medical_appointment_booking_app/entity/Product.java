@@ -29,6 +29,9 @@ public class Product {
     private String productName;
 
     @Column(nullable = false)
+    private String image;
+
+    @Column(nullable = false)
     private Long quantity;
 
     @Column(nullable = false)
