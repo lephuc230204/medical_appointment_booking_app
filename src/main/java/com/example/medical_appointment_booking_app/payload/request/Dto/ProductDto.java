@@ -23,6 +23,7 @@ public class ProductDto {
                 .quantity(product.getQuantity())
                 .currentQuantity(product.getCurrentQuantity())
                 .price(product.getPrice())
+                .description(product.getDescription())
                 .build();
     }
 }
