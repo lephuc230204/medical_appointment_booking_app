@@ -9,6 +9,7 @@ import lombok.Data;
 public class ProductDto {
     private Long productId;
     private String productName;
+    private String image;
     private String category;
     private Long quantity;
     private Long currentQuantity;
@@ -19,6 +20,7 @@ public class ProductDto {
         return ProductDto.builder()
                 .productId(product.getProductId())
                 .productName(product.getProductName())
+                .image(product.getImage())
                 .category(product.getCategory().getCategoryName())
                 .quantity(product.getQuantity())
                 .currentQuantity(product.getCurrentQuantity())
