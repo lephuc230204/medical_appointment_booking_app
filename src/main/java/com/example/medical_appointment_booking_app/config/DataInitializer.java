@@ -26,23 +26,44 @@
 //
 //    @PostConstruct
 //    public void init() {
-//        // Kiểm tra và lấy role "ROLE_ADMIN" và "ROLE_USER" từ cơ sở dữ liệu
-//        Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseThrow(() -> new RuntimeException("Role ADMIN not found"));
-//        Role roleUser = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new RuntimeException("Role USER not found"));
+//        initRoles();
+//    }
+//
+//    private void initRoles() {
+//        if (!roleRepository.findByName("ROLE_ADMIN").isPresent()) {
+//            Role adminRole = new Role();
+//            adminRole.setName("ROLE_ADMIN");
+//            roleRepository.save(adminRole);
+//        }
+//
+//        if (!roleRepository.findByName("ROLE_USER").isPresent()) {
+//            Role userRole = new Role();
+//            userRole.setName("ROLE_USER");
+//            roleRepository.save(userRole);
+//        }
+//
+//        initUsers();
+//    }
+//
+//    private void initUsers() {
+//        // Lấy roles từ cơ sở dữ liệu
+//        Role roleAdmin = roleRepository.findByName("ROLE_ADMIN")
+//                .orElseThrow(() -> new RuntimeException("Role ADMIN not found"));
+//        Role roleUser = roleRepository.findByName("ROLE_USER")
+//                .orElseThrow(() -> new RuntimeException("Role USER not found"));
 //
 //        // Tạo người dùng admin
 //        User admin = User.builder()
 //                .email("admin@example.com")
-//                .password(passwordEncoder.encode("123456"))  // Mã hóa mật khẩu
+//                .password(passwordEncoder.encode("123456"))
 //                .role(roleAdmin)
 //                .username("admin")
-//                .dob(LocalDate.of(1990, 1, 1))  // Ngày sinh
+//                .dob(LocalDate.of(1990, 1, 1))
 //                .phoneNumber("1234567890")
-//                .status(Status.ACTIVE)  // Trạng thái là ACTIVE
-//                .setCreatedDate(LocalDate.now())  // Ngày tạo
+//                .status(Status.ACTIVE)
+//                .setCreatedDate(LocalDate.now())
 //                .build();
 //
-//        // Lưu người dùng admin vào cơ sở dữ liệu
 //        userRepository.save(admin);
 //
 //        // Tạo người dùng thường
@@ -53,11 +74,12 @@
 //                .username("user")
 //                .dob(LocalDate.of(2000, 1, 1))
 //                .phoneNumber("0987654321")
-//                .status(Status.ACTIVE)  // Trạng thái là ACTIVE
+//                .status(Status.ACTIVE)
 //                .setCreatedDate(LocalDate.now())
 //                .build();
 //
-//        // Lưu người dùng thường vào cơ sở dữ liệu
 //        userRepository.save(user);
 //    }
 //}
+//
+//
