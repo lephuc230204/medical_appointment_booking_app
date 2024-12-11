@@ -11,6 +11,6 @@ public interface ProductService {
     ResponseData<ProductDto> create(ProductForm form) throws IOException;
     ResponseData<Page<ProductDto>> getProduct(int page, int size);
     ResponseData<ProductDto> getProductById(Long productId);
-//    ResponseData<ProductDto> updateProduct(Long productId, ProductForm form);
+    ResponseData<ProductDto> updateProduct(Long productId, ProductForm form) throws IOException;
     ResponseData<Void> deleteProduct(Long productId);
 }

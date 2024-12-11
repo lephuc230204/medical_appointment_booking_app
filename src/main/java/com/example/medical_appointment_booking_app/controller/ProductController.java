@@ -35,4 +35,9 @@ public class ProductController {
     public ResponseEntity<ResponseData<ProductDto>> getProduct(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductById(productId));
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<ResponseData<ProductDto>> update(@PathVariable Long productId, @ModelAttribute @Valid ProductForm form) throws IOException {
+        return ResponseEntity.ok(productService.updateProduct(productId,form));
+    }
 }

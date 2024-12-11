@@ -98,6 +98,44 @@ public class ProductServiceImpl implements ProductService {
         return new ResponseData<>(200,"Product successfully deleted");
     }
 
+    public ResponseData<ProductDto> updateProduct(Long productId,ProductForm form) throws IOException {
+        log.info("Updating product with id {}", productId);
+        Product product = productRepository.findByProductId(productId).orElse(null);
+        if (product == null) {
+            log.error("Product with id {} not found", productId);
+            return new ResponseError<>(404, "Product not found");
+        }
+
+        Category category = categoryService.checkOrCreateCategory(form.getCategoryName());
+
+        String uploadedImagePath = null;
+        if (form.getProductImage() != null && !form.getProductImage().isEmpty()) {
+            Path uploadPath = Paths.get(System.getProperty("user.dir"), "public/upload/product");
+
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+                log.info("Created product directory: " + uploadPath.toAbsolutePath());
+            }
+
+            String fileName = form.getProductImage().getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+            form.getProductImage().transferTo(filePath.toFile());
+            uploadedImagePath = "public/upload/product/" + fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
+        }else {
+            log.warn("No image provided in the form.");
+            return new ResponseError<>(404, "No image provided in the form.");
+        }
+        product.setProductName(form.getProductName());
+        product.setImage(uploadedImagePath);
+        product.setCategory(category);
+        product.setQuantity(form.getQuantity());
+        product.setCurrentQuantity(product.getCurrentQuantity() + form.getQuantity());
+        product.setPrice(form.getPrice());
+        product.setDescription(form.getDescription());
+
+        productRepository.save(product);
+        return new ResponseData<>(200,"Update product successfully", ProductDto.fromEntity(product));
+    }
 
 
 }
