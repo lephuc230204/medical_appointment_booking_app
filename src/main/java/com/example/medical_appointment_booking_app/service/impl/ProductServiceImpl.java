@@ -38,7 +38,6 @@ public class ProductServiceImpl implements ProductService {
         if (form.getProductImage() != null && !form.getProductImage().isEmpty()) {
             Path uploadPath = Paths.get(System.getProperty("user.dir"), "public/upload/product");
 
-            // Tạo thư mục nếu chưa tồn tại
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
                 log.info("Created product directory: " + uploadPath.toAbsolutePath());
@@ -61,7 +60,6 @@ public class ProductServiceImpl implements ProductService {
                 .price(form.getPrice())
                 .description(form.getDescription())
                 .build();
-
         productRepository.save(product);
         return new ResponseData<>(200, "Create new product successfully", ProductDto.fromEntity(product));
     }

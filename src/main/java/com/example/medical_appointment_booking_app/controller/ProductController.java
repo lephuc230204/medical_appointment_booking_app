@@ -20,7 +20,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("")
-    public ResponseEntity<ResponseData<?>> create(@RequestBody @Valid ProductForm form) throws IOException {
+    public ResponseEntity<ResponseData<?>> create(@ModelAttribute @Valid ProductForm form) throws IOException {
         return ResponseEntity.ok(productService.create(form));
     }
 
@@ -31,7 +31,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProduct(page, size));
     }
 
-    @GetMapping("{productId}")
+    @GetMapping("/{productId}")
     public ResponseEntity<ResponseData<ProductDto>> getProduct(@PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductById(productId));
     }
