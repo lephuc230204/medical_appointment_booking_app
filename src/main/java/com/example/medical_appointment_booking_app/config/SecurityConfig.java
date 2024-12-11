@@ -44,7 +44,6 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(WHITELISTED_USER).permitAll() // Cho phép các URL trong whitelist
-                        .requestMatchers(HttpMethod.GET,"/api/v1/products").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/v1/products").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/products/{productId}").hasAnyAuthority("ROLE_ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/v1/users/**").hasAnyAuthority("ROLE_ADMIN")
