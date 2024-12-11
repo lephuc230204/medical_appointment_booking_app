@@ -1,5 +1,6 @@
 package com.example.medical_appointment_booking_app.service.impl;
 
+import com.example.medical_appointment_booking_app.entity.Cart;
 import com.example.medical_appointment_booking_app.entity.Role;
 import com.example.medical_appointment_booking_app.entity.User;
 import com.example.medical_appointment_booking_app.payload.request.Dto.AuthDto;
@@ -7,6 +8,7 @@ import com.example.medical_appointment_booking_app.payload.request.Form.SignInFo
 import com.example.medical_appointment_booking_app.payload.request.Form.SignUpForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.payload.response.ResponseError;
+import com.example.medical_appointment_booking_app.repository.CartRepository;
 import com.example.medical_appointment_booking_app.repository.RoleRepository;
 import com.example.medical_appointment_booking_app.repository.UserRepository;
 import com.example.medical_appointment_booking_app.middleware.JwtProvider;
@@ -38,6 +40,8 @@ public class AuthServiceImpl implements AuthService {
     private JwtProvider jwtProvider;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CartRepository cartRepository;
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
@@ -90,6 +94,12 @@ public class AuthServiceImpl implements AuthService {
                 .status(User.Status.NONACTIVE)
                 .build();
         userRepository.save(user);
+
+        Cart cart = Cart.builder()
+                .user(user)
+                .createdDate(LocalDate.now())
+                .build();
+        cartRepository.save(cart);
 
         kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,otpCode=%s", user.getEmail(), user.getUserId(), otpCode));
         log.info("User {} registered successfully with ID {}, pls check email to confirm OTP. Thanks!", user.getEmail(), user.getUserId());

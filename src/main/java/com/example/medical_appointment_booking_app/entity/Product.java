@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -32,13 +33,13 @@ public class Product {
     private String image;
 
     @Column(nullable = false)
-    private Long quantity;
+    private int quantity;
 
     @Column(nullable = false)
-    private Long currentQuantity;
+    private int currentQuantity;
 
     @Column(nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @Column
     private String description;

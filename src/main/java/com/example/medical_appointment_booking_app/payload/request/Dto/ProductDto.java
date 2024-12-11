@@ -4,6 +4,8 @@ import com.example.medical_appointment_booking_app.entity.Product;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Builder
 @Data
 public class ProductDto {
@@ -11,9 +13,9 @@ public class ProductDto {
     private String productName;
     private String image;
     private String category;
-    private Long quantity;
-    private Long currentQuantity;
-    private Double price;
+    private int quantity;
+    private int currentQuantity;
+    private BigDecimal price;
     private String description;
 
     public static ProductDto fromEntity(Product product) {
