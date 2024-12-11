@@ -28,15 +28,18 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
-    private Long totalAmount;
+    private Double totalAmount;
+
+    private String address;
+
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
     public enum Status {
         PENDING, CONFIRMED, SHIPPED, CANCELED
     }
-
+    @Enumerated(EnumType.STRING)
     private Payment paymentMethod;
     public enum Payment {
         COD,ONLINE_PAYMENT
