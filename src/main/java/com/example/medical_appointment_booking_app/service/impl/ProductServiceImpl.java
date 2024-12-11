@@ -128,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductName(form.getProductName());
         product.setImage(uploadedImagePath);
         product.setCategory(category);
-        product.setQuantity(form.getQuantity());
+        product.setQuantity(form.getQuantity() + product.getQuantity());
         product.setCurrentQuantity(product.getCurrentQuantity() + form.getQuantity());
         product.setPrice(form.getPrice());
         product.setDescription(form.getDescription());
