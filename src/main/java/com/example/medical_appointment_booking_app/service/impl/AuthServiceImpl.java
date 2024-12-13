@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseData<String> register(SignUpForm form){
+    public ResponseData<String> register(SignUpForm form) {
         if (userRepository.existsByEmail(form.getEmail())) {
             return new ResponseError<>(400, "Email address already in use");
         }
@@ -103,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
 
         kafkaTemplate.send("confirm-account-topic", String.format("email=%s,id=%s,otpCode=%s", user.getEmail(), user.getUserId(), otpCode));
         log.info("User {} registered successfully with ID {}, pls check email to confirm OTP. Thanks!", user.getEmail(), user.getUserId());
-        return new ResponseData<>(200, "User {} registered successfully, pls check email to confirm OTP. Thanks!", user.getEmail());
+        return new ResponseData<>(200, "Success register new user. Please check your email for confirmation", "Id: " + user.getUserId());
     }
 
 

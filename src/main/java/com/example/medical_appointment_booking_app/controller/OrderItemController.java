@@ -20,7 +20,7 @@ public class OrderItemController {
 
     private final OrderItemService orderItemService;
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/order/{orderId}")
     public ResponseEntity<ResponseData<List<OrderItemDto>>> getOrderItemsByOrderId(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderItemService.getOrderItemsByOrderId(orderId));
     }

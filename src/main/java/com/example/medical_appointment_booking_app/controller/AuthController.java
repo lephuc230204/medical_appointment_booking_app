@@ -8,7 +8,6 @@ import com.example.medical_appointment_booking_app.payload.response.ResponseData
 import com.example.medical_appointment_booking_app.payload.response.ResponseError;
 import com.example.medical_appointment_booking_app.service.AuthService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
