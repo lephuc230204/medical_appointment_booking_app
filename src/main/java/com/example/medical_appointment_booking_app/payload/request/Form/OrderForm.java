@@ -16,7 +16,7 @@ public class OrderForm {
     @NotNull(message = "Phone number cannot be null")
     @Size(min = 10, message = "Phone number must be at least 11 characters long")
     private String phoneNumber;
-
+    private String orderInfo;
     private List<Long> cartItemId;
     private Order.Payment payment;
 

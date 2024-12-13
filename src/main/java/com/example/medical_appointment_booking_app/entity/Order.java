@@ -32,6 +32,8 @@ public class Order {
 
     private String address;
 
+    private String orderInfo;
+
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)

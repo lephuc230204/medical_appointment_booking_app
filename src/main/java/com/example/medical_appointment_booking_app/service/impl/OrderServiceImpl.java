@@ -55,10 +55,14 @@ public class OrderServiceImpl implements OrderService {
                 .mapToDouble(cartItem -> cartItem.getQuantity() * cartItem.getPrice().doubleValue())
                 .sum();
 
+        if(form.getOrderInfo() == null){
+            form.setOrderInfo("Thanh toan hoa don");
+        }
         Order order = new Order();
         order.setUser(user);
         order.setPaymentMethod(form.getPayment());
         order.setStatus(Order.Status.PENDING);
+        order.setOrderInfo(form.getOrderInfo());
         order.setPhoneNumber(form.getPhoneNumber());
         order.setAddress(form.getAddress());
         order.setOrderDate(LocalDate.now());
