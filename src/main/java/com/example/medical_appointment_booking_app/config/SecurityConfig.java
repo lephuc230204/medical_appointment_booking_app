@@ -34,7 +34,10 @@ public class SecurityConfig {
     private static final String[] WHITELISTED_USER = {
             "/api/v1/auth/**",
             "/uploads/**",
-            "/ws/chat/**"
+            "/ws/chat/**",
+            "/create-payment",  // Cho phép tất cả người dùng truy cập
+            "/notify",           // Cho phép tất cả người dùng truy cập
+            "/return"
     };
 
     @Bean

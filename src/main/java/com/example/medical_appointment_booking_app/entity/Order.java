@@ -42,6 +42,6 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Payment paymentMethod;
     public enum Payment {
-        COD,ONLINE_PAYMENT
+        COD,ONLINE_PAYMENT,MOMO
     }
 }
