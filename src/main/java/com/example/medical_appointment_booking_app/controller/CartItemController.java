@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class CartItemController {
     private final CartItemService cartItemService;
 
-    @PostMapping("/add")
-    public ResponseEntity<ResponseData<CartItemDto>> addCartItem(@Valid @RequestBody CartItemForm cartItemForm){
-        return ResponseEntity.ok(cartItemService.addCartItem(cartItemForm));
+    @PostMapping("/add/{productId}")
+    public ResponseEntity<ResponseData<String>> addCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
+        return ResponseEntity.ok(cartItemService.addCartItem(productId, cartItemForm));
     }
 
-    @PostMapping("/remove")
-    public ResponseEntity<ResponseData<CartItemDto>> removeCartItem(@Valid @RequestBody CartItemForm cartItemForm){
-        return ResponseEntity.ok(cartItemService.removeCartItem(cartItemForm));
+    @PostMapping("/remove/{productId}")
+    public ResponseEntity<ResponseData<String>> removeCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
+        return ResponseEntity.ok(cartItemService.removeCartItem(productId, cartItemForm));
     }
 
     @DeleteMapping("/{cartItemId}")

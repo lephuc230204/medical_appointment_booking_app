@@ -94,7 +94,7 @@ public class DataInitializer {
         order1.setOrderDate(LocalDate.now());
         order1.setStatus(Order.Status.PENDING);
         order1.setPaymentMethod(Order.Payment.MOMO);
-        order1.setTotalAmount(100000L);
+        order1.setTotalAmount((double) 100000L);
         order1.setOrderItems(Collections.emptyList()); // Bạn có thể thêm các OrderItem nếu cần
 
         Order order2 = new Order();
@@ -102,7 +102,7 @@ public class DataInitializer {
         order2.setOrderDate(LocalDate.now().minusDays(1));
         order2.setStatus(Order.Status.CONFIRMED);
         order2.setPaymentMethod(Order.Payment.ONLINE_PAYMENT);
-        order2.setTotalAmount(200000L);
+        order2.setTotalAmount((double) 200000L);
         order2.setOrderItems(Collections.emptyList());
 
         // Lưu vào cơ sở dữ liệu

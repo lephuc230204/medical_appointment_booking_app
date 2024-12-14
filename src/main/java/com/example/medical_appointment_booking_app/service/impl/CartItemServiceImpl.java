@@ -38,7 +38,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     @Transactional
-    public ResponseData<CartItemDto> addCartItem(CartItemForm cartItemForm) {
+    public ResponseData<String> addCartItem(Long productId, CartItemForm cartItemForm) {
         // Lấy thông tin user từ context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
@@ -53,10 +53,10 @@ public class CartItemServiceImpl implements CartItemService {
         Cart cart = cartRepository.findByUser_UserId(user.getUserId());
 
         // Lấy thông tin sản phẩm
-        Product product = productRepository.findByProductId(cartItemForm.getProductId())
+        Product product = productRepository.findByProductId(productId)
                 .orElse(null);
         if (product == null) {
-            log.error("Product not found for id {}", cartItemForm.getProductId());
+            log.error("Product not found for id {}", productId);
             return new ResponseError<>(404, "Product not found");
         }
 
@@ -92,7 +92,7 @@ public class CartItemServiceImpl implements CartItemService {
             product.setCurrentQuantity(product.getCurrentQuantity() - cartItemForm.getQuantity());
             productRepository.save(product);
 
-            return new ResponseData<>(200, "Cart item updated successfully", CartItemDto.toDto(itemToUpdate));
+            return new ResponseData<>(200, "Cart item updated successfully");
         } else {
             // Tạo sản phẩm mới trong giỏ hàng
             CartItem newItem = CartItem.builder()
@@ -108,14 +108,14 @@ public class CartItemServiceImpl implements CartItemService {
             product.setCurrentQuantity(product.getCurrentQuantity() - cartItemForm.getQuantity());
             productRepository.save(product);
 
-            return new ResponseData<>(200, "Cart item added successfully", CartItemDto.toDto(newItem));
+            return new ResponseData<>(200, "Cart item added successfully");
         }
     }
 
 
 
     @Override
-    public ResponseData<CartItemDto> removeCartItem(CartItemForm cartItemForm) {
+    public ResponseData<String> removeCartItem(Long productId, CartItemForm cartItemForm) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
@@ -131,9 +131,9 @@ public class CartItemServiceImpl implements CartItemService {
             return new ResponseError<>(404, "Cart not found");
         }
 
-        CartItem cartItem = cartItemRepository.findByCartAndProduct_ProductId(cart, cartItemForm.getProductId()).orElse(null);
+        CartItem cartItem = cartItemRepository.findByCartAndProduct_ProductId(cart, productId).orElse(null);
         if (cartItem == null) {
-            log.error("Item not found in cart for product id {}", cartItemForm.getProductId());
+            log.error("Item not found in cart for product id {}", productId);
             return new ResponseError<>(404, "Item not found in cart");
         }
 
@@ -156,7 +156,7 @@ public class CartItemServiceImpl implements CartItemService {
         product.setCurrentQuantity(newCurrentQuantity);
         productRepository.save(product);
 
-        return new ResponseData<>(200, "Cart item removed successfully", CartItemDto.toDto(cartItem));
+        return new ResponseData<>(200, "Cart item removed successfully");
     }
 
 
