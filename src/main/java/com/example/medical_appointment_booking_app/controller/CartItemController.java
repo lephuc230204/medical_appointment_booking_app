@@ -31,6 +31,10 @@ public class CartItemController {
     public ResponseEntity<ResponseData<String>> deleteCartItem(@PathVariable Long cartItemId){
         return ResponseEntity.ok(cartItemService.deleteCartItem(cartItemId));
     }
+    @DeleteMapping
+    public ResponseEntity<ResponseData<String>> deleteAllCartItems(){
+        return ResponseEntity.ok(cartItemService.deleteAllCartItems());
+    }
 
     @GetMapping
     public ResponseEntity<ResponseData<Page<CartItemDto>>> getCartItems( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
