@@ -22,7 +22,7 @@ public class TimeSchedule {
     private Long timeScheduleId;
 
     @OneToMany(mappedBy = "timeSchedule")
-    private List<Schedule> schedule;
+    private List<Schedule> schedules;
 
     @Column(nullable = false)
     private LocalDate appointmentDate;// ngay hen

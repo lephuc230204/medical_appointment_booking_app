@@ -22,13 +22,13 @@ public class Schedule {
     private Long scheduleId;
 
     @OneToMany( mappedBy = "schedule")
-    private List<Appoinment> appointment;
+    private List<Appoinment> appointments;
 
     @ManyToOne()
     @JoinColumn(name = "timeSchedule_id")
     private TimeSchedule timeSchedule;
 
     private boolean isFull(){
-        return appointment.size() >= 15;
+        return appointments.size() >= 15;
     }
 }
