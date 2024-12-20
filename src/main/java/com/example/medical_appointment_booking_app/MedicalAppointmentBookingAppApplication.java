@@ -2,10 +2,17 @@ package com.example.medical_appointment_booking_app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class MedicalAppointmentBookingAppApplication {
     public static void main(String[] args) {
         SpringApplication.run(MedicalAppointmentBookingAppApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
