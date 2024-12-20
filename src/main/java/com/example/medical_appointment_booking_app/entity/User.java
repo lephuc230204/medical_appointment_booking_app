@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private String password;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Role_ID", nullable = false)
-    private com.example.medical_appointment_booking_app.entity.Role role;
+    private Role role;
 
     private LocalDate dob;
     private String username;
