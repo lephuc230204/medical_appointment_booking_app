@@ -4,6 +4,7 @@ import com.example.medical_appointment_booking_app.repository.AddressRepository;
 import com.example.medical_appointment_booking_app.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -82,4 +83,33 @@ public class AddressServiceImpl implements AddressService {
 
     }
 
+    public List<Map<String, Object>> getWards(int districtId){
+        String url = "https://online-gateway.ghn.vn/shiip/public-api/master-data/ward?district_id";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("token" , ghnToken);
+        headers.set("Content-Type", "application/json");
+
+        Map<String,Integer> payload = new HashMap<>();
+        payload.put("district_id", districtId);
+
+        HttpEntity<Map<String, Integer>> request = new HttpEntity<> (payload, headers);
+
+        ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST,  request, Map.class);
+
+        Map<String,Object> responseBody = (Map<String, Object>) response.getBody();
+
+        List<Map<String,Object>> wards = (List<Map<String,Object>>) responseBody.get("data");
+
+        List<Map<String, Object>> filteredWards = new ArrayList<>();
+
+        for (Map<String, Object> ward : wards) {
+            Map<String, Object> filteredWard = new HashMap<>();
+            filteredWard.put("WardCode", ward.get("WardCode"));
+            filteredWard.put("WardName", ward.get("WardName"));
+            filteredWards.add(filteredWard);
+        }
+
+        return filteredWards;
+    }
 }

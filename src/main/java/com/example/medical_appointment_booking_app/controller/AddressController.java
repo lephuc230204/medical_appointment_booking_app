@@ -3,10 +3,7 @@ package com.example.medical_appointment_booking_app.controller;
 import com.example.medical_appointment_booking_app.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -27,5 +24,10 @@ public class AddressController {
     @GetMapping("/districts")
     public ResponseEntity<List<Map<String, Object>>> getDistricts(@RequestParam("provinceId") int provinceId) {
         return ResponseEntity.ok(addressService.getDistricts(provinceId));
+    }
+
+    @GetMapping("/wards")
+    public ResponseEntity<List<Map<String, Object>>> getWards(@RequestParam("districtId") int districtId) {
+        return ResponseEntity.ok(addressService.getWards(districtId));
     }
 }

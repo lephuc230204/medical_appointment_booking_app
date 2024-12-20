@@ -14,5 +14,5 @@ public interface AddressService {
 
     List<Map<String, Object>> getDistricts(int provinceId);
 
-//    List<Map<String, Object>> getWards(int districtId);
+    List<Map<String, Object>> getWards(int districtId);
 }
