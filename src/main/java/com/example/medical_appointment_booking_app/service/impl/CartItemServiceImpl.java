@@ -88,10 +88,6 @@ public class CartItemServiceImpl implements CartItemService {
 
             cartItemRepository.save(itemToUpdate);
 
-            // Cập nhật lại `currentQuantity` của sản phẩm
-            product.setCurrentQuantity(product.getCurrentQuantity() - cartItemForm.getQuantity());
-            productRepository.save(product);
-
             return new ResponseData<>(200, "Cart item updated successfully");
         } else {
             // Tạo sản phẩm mới trong giỏ hàng
@@ -103,10 +99,6 @@ public class CartItemServiceImpl implements CartItemService {
                     .build();
 
             cartItemRepository.save(newItem);
-
-            // Cập nhật lại `currentQuantity` của sản phẩm
-            product.setCurrentQuantity(product.getCurrentQuantity() - cartItemForm.getQuantity());
-            productRepository.save(product);
 
             return new ResponseData<>(200, "Cart item added successfully");
         }
@@ -150,11 +142,6 @@ public class CartItemServiceImpl implements CartItemService {
         } else {
             cartItemRepository.delete(cartItem);
         }
-
-        Product product = cartItem.getProduct();
-        int newCurrentQuantity = product.getCurrentQuantity() + cartItemForm.getQuantity();
-        product.setCurrentQuantity(newCurrentQuantity);
-        productRepository.save(product);
 
         return new ResponseData<>(200, "Cart item removed successfully");
     }
@@ -218,6 +205,26 @@ public class CartItemServiceImpl implements CartItemService {
         Page<CartItemDto> cartItemDtos = cartItems.map(CartItemDto::toDto);
 
         return new ResponseData<>(200, "Cart items retrieved successfully", cartItemDtos);
+    }
+
+    @Override
+    public ResponseData<String> deleteAllCartItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            log.error("User not found for email {}", email);
+            return new ResponseError<>(404, "User not found");
+        }
+        Cart cart = cartRepository.findByUser_UserId(user.getUserId());
+        if (cart.getItems().isEmpty()) {
+            log.info("Cart is already empty for user with email {}", email);
+            return new ResponseData<>(200, "Cart is already empty");
+        }
+        cartItemRepository.deleteAll(cart.getItems());
+        log.info("All cart items deleted for user with email {}", email);
+
+        return new ResponseData<>(200, "Cart items deleted successfully");
     }
 
 }

@@ -24,19 +24,30 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-    @Column(unique = true, nullable = false)
-    private String email;
-    private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Role_ID", nullable = false)
-    private com.example.medical_appointment_booking_app.entity.Role role;
+    private Role role;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String password;
 
     private LocalDate dob;
+
     private String username;
+
     private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     private String otp;
+
     private LocalDate setCreatedDate;
     public enum Status {
         ACTIVE, NONACTIVE, DELETED

@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
             String fileName = form.getProductImage().getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
             form.getProductImage().transferTo(filePath.toFile());
-            uploadedImagePath = "public/upload/product/" + fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
+            uploadedImagePath = fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
         }else {
             log.warn("No image provided in the form.");
         }
@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
             String fileName = form.getProductImage().getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
             form.getProductImage().transferTo(filePath.toFile());
-            uploadedImagePath = "public/upload/product/" + fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
+            uploadedImagePath = fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
         }else {
             log.warn("No image provided in the form.");
             return new ResponseError<>(404, "No image provided in the form.");

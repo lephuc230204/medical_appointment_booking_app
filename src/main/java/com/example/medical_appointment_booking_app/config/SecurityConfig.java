@@ -33,7 +33,7 @@ public class SecurityConfig {
     // Tạo danh sách các API nằm trong whitelist
     private static final String[] WHITELISTED_USER = {
             "/api/v1/auth/**",
-            "/uploads/**",
+            "/upload/**",
             "/ws/chat/**",
             "/create-payment",  // Cho phép tất cả người dùng truy cập
             "/notify",           // Cho phép tất cả người dùng truy cập
