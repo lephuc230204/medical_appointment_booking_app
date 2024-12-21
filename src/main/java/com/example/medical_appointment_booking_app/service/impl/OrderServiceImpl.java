@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("No items selected for checkout. Please select items and try again.");
         }
 
-        Double totalAmount = selectedCartItems.stream()
+        Double totalPrice = selectedCartItems.stream()
                 .mapToDouble(cartItem -> cartItem.getQuantity() * cartItem.getPrice().doubleValue())
                 .sum();
 
@@ -66,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
         order.setPhoneNumber(form.getPhoneNumber());
         order.setAddress(form.getAddress());
         order.setOrderDate(LocalDate.now());
-        order.setTotalAmount(totalAmount);
+        order.setTotalPrice(totalPrice);
         orderRepository.save(order);
         log.info("Order created with ID: {}", order.getOrderId());
 
