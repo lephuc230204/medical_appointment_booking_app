@@ -14,7 +14,7 @@ public class OrderDto {
     private String address;
     private String phoneNumber;
     private String orderInfo;
-    private Double totalAmount;
+    private Double totalPrice;
     private LocalDate orderDate;
     private Order.Status orderStatus;
     private Order.Payment ordrePayment;
@@ -26,7 +26,7 @@ public class OrderDto {
                 .address(order.getAddress())
                 .phoneNumber(order.getPhoneNumber())
                 .orderInfo(order.getOrderInfo())
-                .totalAmount(order.getTotalAmount())
+                .totalPrice(order.getTotalPrice())
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getStatus())
                 .ordrePayment(order.getPaymentMethod())

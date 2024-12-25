@@ -28,7 +28,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
-    private Double totalAmount;
+    private Double totalPrice;
 
     private String address;
 

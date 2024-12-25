@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int appointmentId;
+    private Long appointmentId;
 
     @ManyToOne
     @JoinColumn( name = "user_id", nullable = false)
@@ -37,11 +37,12 @@ public class Appointment {
     @Column(nullable = false)
     private LocalDate createDate;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     private boolean isCome;
 
-    private enum Status {
+    public enum Status {
         PENDING,APPROVED,CANCELLED,COMPLETED
     }
 
