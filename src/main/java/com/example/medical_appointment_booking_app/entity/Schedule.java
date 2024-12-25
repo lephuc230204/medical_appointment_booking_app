@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -21,14 +19,33 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private User user;
+
     @OneToMany( mappedBy = "schedule")
-    private List<Appoinment> appointments;
+    private List<Appointment> appointments;
 
     @ManyToOne()
     @JoinColumn(name = "timeSchedule_id")
     private TimeSchedule timeSchedule;
 
-    private boolean isFull(){
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.NOT_FULL;
+
+    public boolean isFull(){
         return appointments.size() >= 15;
+    }
+
+    public void updateStatus() {
+        if (isFull()) {
+            this.status = Status.FULL;
+        } else {
+            this.status = Status.NOT_FULL;
+        }
+    }
+
+    public enum Status {
+        FULL,NOT_FULL
     }
 }
