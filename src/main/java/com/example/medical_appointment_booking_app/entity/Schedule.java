@@ -22,7 +22,7 @@ public class Schedule {
     private Long scheduleId;
 
     @OneToMany( mappedBy = "schedule")
-    private List<Appoinment> appointments;
+    private List<Appointment> appointments;
 
     @ManyToOne()
     @JoinColumn(name = "timeSchedule_id")
