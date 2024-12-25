@@ -2,6 +2,7 @@ package com.example.medical_appointment_booking_app.service.impl;
 
 import com.example.medical_appointment_booking_app.entity.DailyAppointmentStats;
 import com.example.medical_appointment_booking_app.entity.TimeSchedule;
+import com.example.medical_appointment_booking_app.payload.request.Dto.TimeScheduleDto;
 import com.example.medical_appointment_booking_app.payload.request.Form.TimeScheduleForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.repository.DailyAppointmentStatsRepository;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TimeScheduleServiceImpl implements TimeScheduleService {
@@ -61,5 +63,19 @@ public class TimeScheduleServiceImpl implements TimeScheduleService {
 
 
         return new  ResponseData<>(200,"Time schedule created successfully");
+    }
+
+    @Override
+    public ResponseData<List<TimeScheduleDto>> getByDate(LocalDate date) {
+
+        List<TimeSchedule> timeSchedules  = timeScheduleRepository.findAllByAppointmentDate(date);
+        if (timeSchedules.isEmpty()) {
+            return new ResponseData<>(404, "No time schedules found for the specified date", null);
+        }
+        List<TimeScheduleDto> timeScheduleDtos = timeSchedules.stream()
+                .map(TimeScheduleDto::toDto)
+                .collect(Collectors.toList());
+
+        return new ResponseData<>(200,"get successfully",timeScheduleDtos);
     }
 }
