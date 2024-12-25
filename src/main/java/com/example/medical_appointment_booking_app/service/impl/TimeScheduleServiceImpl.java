@@ -1,8 +1,10 @@
 package com.example.medical_appointment_booking_app.service.impl;
 
+import com.example.medical_appointment_booking_app.entity.DailyAppointmentStats;
 import com.example.medical_appointment_booking_app.entity.TimeSchedule;
 import com.example.medical_appointment_booking_app.payload.request.Form.TimeScheduleForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
+import com.example.medical_appointment_booking_app.repository.DailyAppointmentStatsRepository;
 import com.example.medical_appointment_booking_app.repository.TimeScheduleRepository;
 import com.example.medical_appointment_booking_app.service.TimeScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import java.util.List;
 public class TimeScheduleServiceImpl implements TimeScheduleService {
     @Autowired
     private TimeScheduleRepository timeScheduleRepository;
+    @Autowired
+    private DailyAppointmentStatsRepository dailyAppointmentStatsRepository;
 
     @Override
     public ResponseData<String> createTimeSchedule(TimeScheduleForm form) {
@@ -47,6 +51,14 @@ public class TimeScheduleServiceImpl implements TimeScheduleService {
                 .appointmentEnd(LocalTime.of(20, 0))
                 .build());
         timeScheduleRepository.saveAll(timeSchedules);
+
+        DailyAppointmentStats dailyAppointmentStats = new DailyAppointmentStats();
+        dailyAppointmentStats.setDate(form.getDate());
+        dailyAppointmentStats.setTotalAppointments(0L);
+        dailyAppointmentStats.setCompletedAppointments(0L);
+        dailyAppointmentStats.setCancelledAppointments(0L);
+        dailyAppointmentStatsRepository.save(dailyAppointmentStats);
+
 
         return new  ResponseData<>(200,"Time schedule created successfully");
     }

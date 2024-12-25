@@ -14,6 +14,7 @@ public class AppointmentDto {
     private Long doctorId;
     private Long scheduleId;
     private String reason;
+    private Long appointmentNumber;
     private LocalDate createdAt;
     private Appointment.Status status;
 
@@ -24,6 +25,7 @@ public class AppointmentDto {
                 .doctorId(appointment.getDoctor().getUserId())
                 .scheduleId(appointment.getSchedule().getScheduleId())
                 .reason(appointment.getReason())
+                .appointmentNumber(appointment.getAppointmentNumber())
                 .createdAt(appointment.getCreateDate())
                 .status(appointment.getStatus())
                 .build();

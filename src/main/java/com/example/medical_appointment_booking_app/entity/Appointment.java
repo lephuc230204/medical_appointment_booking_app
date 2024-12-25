@@ -42,6 +42,8 @@ public class Appointment {
 
     private boolean isCome;
 
+    private Long appointmentNumber;
+
     public enum Status {
         PENDING,APPROVED,CANCELLED,COMPLETED
     }
