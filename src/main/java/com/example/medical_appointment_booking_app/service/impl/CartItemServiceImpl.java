@@ -84,7 +84,7 @@ public class CartItemServiceImpl implements CartItemService {
             }
 
             itemToUpdate.setQuantity(newQuantity);
-            itemToUpdate.setPrice(product.getPrice().multiply(BigDecimal.valueOf(newQuantity)));
+            itemToUpdate.setPrice(product.getPrice());
 
             cartItemRepository.save(itemToUpdate);
 
@@ -94,7 +94,7 @@ public class CartItemServiceImpl implements CartItemService {
             CartItem newItem = CartItem.builder()
                     .product(product)
                     .quantity(cartItemForm.getQuantity())
-                    .price(product.getPrice().multiply(BigDecimal.valueOf(cartItemForm.getQuantity())))
+                    .price(product.getPrice())
                     .cart(cart)
                     .build();
 
@@ -137,7 +137,7 @@ public class CartItemServiceImpl implements CartItemService {
         int newQuantity = cartItem.getQuantity() - cartItemForm.getQuantity();
         if (newQuantity > 0) {
             cartItem.setQuantity(newQuantity);
-            cartItem.setPrice(cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(newQuantity)));
+            cartItem.setPrice(cartItem.getProduct().getPrice());
             cartItemRepository.save(cartItem);
         } else {
             cartItemRepository.delete(cartItem);

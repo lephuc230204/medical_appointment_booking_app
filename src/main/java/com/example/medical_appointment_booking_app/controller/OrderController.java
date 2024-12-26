@@ -8,6 +8,7 @@ import com.example.medical_appointment_booking_app.payload.response.ResponseData
 import com.example.medical_appointment_booking_app.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +16,22 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("api/v1/order")
 @RestController
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("")
-    public ResponseEntity<ResponseData<OrderDto>> createOrder(Principal principal,@RequestBody @Valid OrderForm form) {
-        return ResponseEntity.ok(orderService.create(principal, form));
+    @PostMapping("/create")
+    public ResponseEntity<?> createOrder(@RequestBody OrderForm form) {
+        try {
+            ResponseData<?> response = orderService.create(form, form.getCartItemIds());
+            return ResponseEntity.status(response.getStatus()).body(response);
+        } catch (Exception e) {
+            log.error("Error creating order: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body("Internal Server Error");
+        }
     }
 // đang sửa
 //    @GetMapping("")

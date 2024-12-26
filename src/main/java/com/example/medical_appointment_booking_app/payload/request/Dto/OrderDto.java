@@ -5,27 +5,39 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Data
 public class OrderDto {
     private Long orderId;
     private String userName;
-    private String address;
+    private int provinceId;
+    private int districtId;
+    private String wardId;
+    private String fullAddress;
     private String phoneNumber;
-    private String orderInfo;
     private Double totalPrice;
+    private List<OrderItemDto> orderItems;
     private LocalDate orderDate;
+    private double shippingFee;
     private Order.Status orderStatus;
     private Order.Payment ordrePayment;
 
-    public static OrderDto toDto(Order order) {
+    public static OrderDto fromEntity(Order order) {
         return OrderDto.builder()
                 .orderId(order.getOrderId())
                 .userName(order.getUser().getUsername())
-                .address(order.getAddress())
-                .phoneNumber(order.getPhoneNumber())
-                .orderInfo(order.getOrderInfo())
+                .provinceId(order.getAddress().getProvinceId())
+                .districtId(order.getAddress().getDistrictId())
+                .wardId(order.getAddress().getWardId())
+                .fullAddress(order.getAddress().getFullAddress())
+                .phoneNumber(order.getPhone())
+                .orderItems(order.getOrderItems().stream()
+                        .map(OrderItemDto::fromEntity)
+                        .collect(Collectors.toList()))
+                .shippingFee(order.getShippingFee())
                 .totalPrice(order.getTotalPrice())
                 .orderDate(order.getOrderDate())
                 .orderStatus(order.getStatus())

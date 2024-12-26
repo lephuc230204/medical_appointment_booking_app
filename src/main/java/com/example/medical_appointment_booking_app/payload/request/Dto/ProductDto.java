@@ -15,7 +15,7 @@ public class ProductDto {
     private String category;
     private int quantity;
     private int currentQuantity;
-    private BigDecimal price;
+    private double price;
     private String description;
 
     public static ProductDto fromEntity(Product product) {

@@ -23,18 +23,24 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private LocalDate orderDate;
-
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
+
+    private LocalDate orderDate;
+
     private Double totalPrice;
 
-    private String address;
+    private String phone;
 
-    private String orderInfo;
+    @Column(nullable = false)
+    private String note; // Ghi chú của khách hàng
 
-    private String phoneNumber;
+    @Column(nullable = false)
+    private double shippingFee; // Phí vận chuyển
 
     @Enumerated(EnumType.STRING)
     private Status status;

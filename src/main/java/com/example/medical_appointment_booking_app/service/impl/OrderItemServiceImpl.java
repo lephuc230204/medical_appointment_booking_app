@@ -34,7 +34,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                     OrderItem orderItem = new OrderItem();
                     orderItem.setProduct(cartItem.getProduct());
                     orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setPrice(cartItem.getPrice().doubleValue());
+                    orderItem.setPrice(cartItem.getPrice());
                     orderItem.setOrder(order);
 
                     // Cập nhật số lượng sản phẩm
@@ -58,7 +58,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         List<OrderItem> orderItems = orderItemRepository.findAll();
         List<OrderItemDto> orderItemDtos = orderItems.stream()
-                .map(OrderItemDto::toDto)
+                .map(OrderItemDto::fromEntity)
                 .collect(Collectors.toList());
 
         return new ResponseData<>(200, "Fetched all order items successfully", orderItemDtos);
@@ -74,7 +74,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         List<OrderItem> orderItems = orderItemRepository.findByOrder_OrderId(orderId);
 
         List<OrderItemDto> orderItemDtos = orderItems.stream()
-                .map(OrderItemDto::toDto)
+                .map(OrderItemDto::fromEntity)
                 .collect(Collectors.toList());
 
         return new ResponseData<>(200, "Fetched order items for orderId " + orderId + " successfully", orderItemDtos);

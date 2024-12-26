@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
-
 @Data
 public class ProductForm {
 
@@ -26,7 +24,10 @@ public class ProductForm {
 
     @NotNull(message = "Price must not be null")
     @Min(value = 0, message = "Price must be greater than or equal to 0")
-    private BigDecimal price;
+    private double price;
+
+    @NotNull(message = "Weight must not be null")
+    private int weight;
 
     @NotBlank(message = "Description must not be null or empty")
     private String description;

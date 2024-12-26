@@ -1,23 +1,17 @@
 package com.example.medical_appointment_booking_app.payload.request.Form;
 
 import com.example.medical_appointment_booking_app.entity.Order;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class OrderForm {
-
-    @NotNull(message = "Address cannot be null")
-    private String address;
-
-    @NotNull(message = "Phone number cannot be null")
-    @Size(min = 10, message = "Phone number must be at least 11 characters long")
-    private String phoneNumber;
-    private String orderInfo;
-    private List<Long> cartItemId;
-    private Order.Payment payment;
-
+    private Long addressId;
+    private Order.Payment paymentMethod;
+    private String phone;
+    private String voucher;
+    private List<Long> cartItemIds;
+    private String shippingUnit;
+    private String note;
 }
