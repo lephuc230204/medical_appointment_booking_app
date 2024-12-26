@@ -17,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,6 +57,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setDoctor(schedule.getUser());
         appointment.setReason(form.getReason());
         appointment.setCreateDate(LocalDate.now());
+        appointment.setComeDate(schedule.getTimeSchedule().getAppointmentDate());
         appointment.setStatus(Appointment.Status.PENDING);
         appointment.setCome(false);
         appointment.setAppointmentNumber(dailyAppointmentStats.getTotalAppointments()+1);
@@ -70,5 +74,41 @@ public class AppointmentServiceImpl implements AppointmentService {
         dailyAppointmentStatsRepository.save(dailyAppointmentStats);
 
         return new ResponseData<>(200,"appointment created", AppointmentDto.toDto(appointment));
+    }
+
+    @Override
+    public ResponseData<String> cancelRequest(Long appointmentID, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Appointment appointment = appointmentRepository.findById(appointmentID)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+        if (!Objects.equals(appointment.getUser().getUserId(), user.getUserId())) {
+            return new ResponseData<>(400, "you are not author");
+        }
+        appointment.setStatus(Appointment.Status.CANCELLED);
+        appointmentRepository.save(appointment);
+
+        DailyAppointmentStats dailyAppointmentStats = dailyAppointmentStatsRepository.findByDate(appointment.getComeDate())
+                .orElseThrow(() -> new RuntimeException("DailyAppointmentStats not found"));
+
+        dailyAppointmentStats.setCancelledAppointments(dailyAppointmentStats.getCancelledAppointments()+1);
+        dailyAppointmentStatsRepository.save(dailyAppointmentStats);
+        return new ResponseData<>(200,"appointment cancelled");
+    }
+
+    @Override
+    public ResponseData<List<AppointmentDto>> getMyAppointments(Principal principal) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Appointment> appointments = appointmentRepository.findAllByUser(user);
+        if (appointments.isEmpty()) {
+            return new ResponseData<>(400, "No appointments found");
+        }
+        List<AppointmentDto> appointmentDtos = appointments.stream()
+                .map(AppointmentDto::toDto)
+                .collect(Collectors.toList());
+
+        return new ResponseData<>(200,"appointments", appointmentDtos);
     }
 }

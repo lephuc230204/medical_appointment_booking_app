@@ -16,6 +16,7 @@ public class AppointmentDto {
     private String reason;
     private Long appointmentNumber;
     private LocalDate createdAt;
+    private LocalDate comeDate;
     private Appointment.Status status;
 
     public static AppointmentDto toDto(Appointment appointment) {
@@ -27,6 +28,7 @@ public class AppointmentDto {
                 .reason(appointment.getReason())
                 .appointmentNumber(appointment.getAppointmentNumber())
                 .createdAt(appointment.getCreateDate())
+                .comeDate(appointment.getComeDate())
                 .status(appointment.getStatus())
                 .build();
     }

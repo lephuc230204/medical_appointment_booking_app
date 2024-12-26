@@ -37,6 +37,8 @@ public class Appointment {
     @Column(nullable = false)
     private LocalDate createDate;
 
+    private LocalDate comeDate;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 

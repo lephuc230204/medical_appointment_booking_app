@@ -8,13 +8,12 @@ import com.example.medical_appointment_booking_app.payload.response.ResponseData
 import com.example.medical_appointment_booking_app.service.AppointmentService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.shaded.io.opentelemetry.proto.resource.v1.ResourceProto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,5 +25,15 @@ public class AppointmentController {
     @PostMapping
     private ResponseEntity<ResponseData<AppointmentDto>> createRequest(@RequestBody AppointmentForm appointmentForm, Principal principal) {
         return ResponseEntity.ok(appointmentService.createRequest(appointmentForm, principal));
+    }
+
+    @PostMapping("/cancel/{appointmentId}")
+    private  ResponseEntity<ResponseData<String>> cancelRequest(@PathVariable Long appointmentId, Principal principal) {
+        return ResponseEntity.ok(appointmentService.cancelRequest(appointmentId,principal));
+    }
+
+    @GetMapping("/me")
+    private ResponseEntity<ResponseData<List<AppointmentDto>>> getMyRequests(Principal principal) {
+        return ResponseEntity.ok(appointmentService.getMyAppointments(principal));
     }
 }
