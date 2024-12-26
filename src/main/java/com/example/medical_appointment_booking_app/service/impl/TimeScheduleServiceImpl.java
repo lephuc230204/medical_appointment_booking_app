@@ -60,8 +60,6 @@ public class TimeScheduleServiceImpl implements TimeScheduleService {
         dailyAppointmentStats.setCompletedAppointments(0L);
         dailyAppointmentStats.setCancelledAppointments(0L);
         dailyAppointmentStatsRepository.save(dailyAppointmentStats);
-
-
         return new  ResponseData<>(200,"Time schedule created successfully");
     }
 

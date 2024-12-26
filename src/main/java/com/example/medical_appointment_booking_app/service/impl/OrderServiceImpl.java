@@ -5,15 +5,19 @@ import com.example.medical_appointment_booking_app.payload.request.Dto.OrderDto;
 import com.example.medical_appointment_booking_app.payload.request.Dto.ProductDto;
 import com.example.medical_appointment_booking_app.payload.request.Form.OrderForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
+import com.example.medical_appointment_booking_app.payload.response.ResponseError;
 import com.example.medical_appointment_booking_app.repository.*;
 import com.example.medical_appointment_booking_app.service.OrderItemService;
 import com.example.medical_appointment_booking_app.service.OrderService;
+import com.example.medical_appointment_booking_app.service.ShipFeeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -32,11 +36,15 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private OrderItemService orderItemService;
+    private final ShipFeeService shipFeeService;
+    private final OrderItemService orderItemService;
+    private final AddressRepository addressRepository;
 
     @Override
-    public ResponseData<OrderDto> create(Principal principal, OrderForm form) {
-        User user = userRepository.findByEmail(principal.getName())
+    public ResponseData<OrderDto> create( OrderForm form, List<Long> cartItemIds) {
+        Authentication authentication  = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         log.info("Creating order for user {}", user);
 
@@ -44,37 +52,49 @@ public class OrderServiceImpl implements OrderService {
         if (cart == null) {
             throw new RuntimeException("No cart found for user");
         }
-        List<CartItem> selectedCartItems = cartItemRepository.findAllById(form.getCartItemId());
 
-        if (selectedCartItems.isEmpty()) {
+        if (cartItemIds == null || cartItemIds.isEmpty()) {
+            log.error("Cart items are empty");
+            return new ResponseError<>(400, "Cart items cannot be empty");
+        }
+
+        List<CartItem> cartItems = cartItemRepository.findAllByCartItemIdIn(cartItemIds);
+
+        if (cartItems.isEmpty()) {
             log.warn("No items selected for checkout by user {}", user.getUsername());
             throw new RuntimeException("No items selected for checkout. Please select items and try again.");
         }
 
-        Double totalPrice = selectedCartItems.stream()
-                .mapToDouble(cartItem -> cartItem.getQuantity() * cartItem.getPrice().doubleValue())
-                .sum();
-
-        if(form.getOrderInfo() == null){
-            form.setOrderInfo("Thanh toan hoa don");
+        Address address = addressRepository.findById(form.getAddressId()).orElse(null);
+        if (address == null) {
+            log.error("Address not found");
+            return new ResponseError<>(400, "Address not found");
         }
+
+
         Order order = new Order();
         order.setUser(user);
-        order.setPaymentMethod(form.getPayment());
+        order.setPaymentMethod(form.getPaymentMethod());
         order.setStatus(Order.Status.PENDING);
-        order.setOrderInfo(form.getOrderInfo());
-        order.setPhoneNumber(form.getPhoneNumber());
-        order.setAddress(form.getAddress());
+        order.setPhone(form.getPhone());
+        order.setAddress(address);
         order.setOrderDate(LocalDate.now());
+        Double totalPrice = cartItems.stream()
+                .mapToDouble(cartItem -> cartItem.getQuantity() * cartItem.getPrice())
+                .sum();
+        List<OrderItem> orderItems = orderItemService.create(cartItems, order);
+
+        double shippingFee = shipFeeService.calculateShipFee(orderItems, address);
+
         order.setTotalPrice(totalPrice);
         orderRepository.save(order);
-        log.info("Order created with ID: {}", order.getOrderId());
-
-        List<OrderItem> orderItems = orderItemService.create(selectedCartItems, order);
         orderItemRepository.saveAll(orderItems);
-        log.info("Created {} order items for order ID: {}", orderItems.size(), order.getOrderId());
 
-        return new ResponseData<>(200, "Create new product successfully", OrderDto.toDto(order));
+        order.setTotalPrice(totalPrice);
+        order.setShippingFee(shippingFee);
+        order.setOrderItems(orderItems);
+        orderRepository.save(order);
+        return new ResponseData<>(200, "Create new product successfully", OrderDto.fromEntity(order));
     }
 
     @Override
@@ -83,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAll(pageable);
         List<OrderDto> data = orders.getContent().stream()
-                .map(OrderDto::toDto)
+                .map(OrderDto::fromEntity)
                 .collect(Collectors.toList());
         return new ResponseData<>(200, "Get orders successfully", data);
     }
@@ -98,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findByUser(user);
 
         List<OrderDto> data = orders.stream()
-                .map(OrderDto::toDto)
+                .map(OrderDto::fromEntity)
                 .collect(Collectors.toList());
 
         return new ResponseData<>(200, "Get orders successfully", data);
@@ -110,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
 
-        return new ResponseData<> (200, "Get order successfully", OrderDto.toDto(order) );
+        return new ResponseData<> (200, "Get order successfully", OrderDto.fromEntity(order) );
     }
 
     @Override
@@ -126,6 +146,6 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Invalid status value: " + status);
         }
         orderRepository.save(order);
-        return new ResponseData<>(200, "Order status updated successfully",OrderDto.toDto(order));
+        return new ResponseData<>(200, "Order status updated successfully",OrderDto.fromEntity(order));
     }
 }

@@ -39,7 +39,10 @@ public class Product {
     private int currentQuantity;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private double price;
+
+    @Column(nullable = true)
+    private int weight;
 
     @Column
     private String description;

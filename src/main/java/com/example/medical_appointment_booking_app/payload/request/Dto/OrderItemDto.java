@@ -1,27 +1,29 @@
 package com.example.medical_appointment_booking_app.payload.request.Dto;
 
+
 import com.example.medical_appointment_booking_app.entity.OrderItem;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
-@Builder
 @Data
+@Builder
 public class OrderItemDto {
     private Long orderItemId;
-    private Long productId;
+    private String bookName;
+    private int height;
+    private int weight;
+    private int length;
+    private int width;
     private int quantity;
-    private Double price;
-    private Long orderId;
+    private double price;
 
-    public static OrderItemDto toDto(OrderItem orderItem) {
+    public static OrderItemDto fromEntity(OrderItem orderItem) {
         return OrderItemDto.builder()
                 .orderItemId(orderItem.getOrderItemId())
-                .productId(orderItem.getProduct().getProductId())
+                .bookName(orderItem.getProduct().getProductName())
+                .length(orderItem.getProduct().getWeight())
                 .quantity(orderItem.getQuantity())
-                .price(orderItem.getProduct().getPrice().doubleValue())
-                .orderId(orderItem.getOrder().getOrderId())
+                .price(orderItem.getPrice())
                 .build();
     }
 }
