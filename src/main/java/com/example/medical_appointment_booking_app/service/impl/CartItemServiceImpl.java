@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Slf4j
@@ -38,11 +39,9 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     @Transactional
-    public ResponseData<String> addCartItem(Long productId, CartItemForm cartItemForm) {
-        // Lấy thông tin user từ context
+    public ResponseData<CartItemDto> addCartItem(Long productId, CartItemForm cartItemForm) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             log.error("User not found for email {}", email);
@@ -85,29 +84,31 @@ public class CartItemServiceImpl implements CartItemService {
 
             itemToUpdate.setQuantity(newQuantity);
             itemToUpdate.setPrice(product.getPrice());
+            itemToUpdate.setCreateDate(LocalDate.now());
 
             cartItemRepository.save(itemToUpdate);
 
-            return new ResponseData<>(200, "Cart item updated successfully");
+            return new ResponseData<>(200, "Cart item updated successfully", CartItemDto.toDto(itemToUpdate));
         } else {
             // Tạo sản phẩm mới trong giỏ hàng
             CartItem newItem = CartItem.builder()
                     .product(product)
                     .quantity(cartItemForm.getQuantity())
                     .price(product.getPrice())
+                    .createDate(LocalDate.now())
                     .cart(cart)
                     .build();
 
             cartItemRepository.save(newItem);
 
-            return new ResponseData<>(200, "Cart item added successfully");
+            return new ResponseData<>(200, "Cart item added successfully", CartItemDto.toDto(newItem));
         }
     }
 
 
 
     @Override
-    public ResponseData<String> removeCartItem(Long productId, CartItemForm cartItemForm) {
+    public ResponseData<CartItemDto> removeCartItem(Long productId, CartItemForm cartItemForm) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
@@ -143,7 +144,7 @@ public class CartItemServiceImpl implements CartItemService {
             cartItemRepository.delete(cartItem);
         }
 
-        return new ResponseData<>(200, "Cart item removed successfully");
+        return new ResponseData<>(200, "Cart item removed successfully", CartItemDto.toDto(cartItem));
     }
 
 
