@@ -19,11 +19,12 @@ public class OrderDto {
     private String fullAddress;
     private String phoneNumber;
     private Double totalPrice;
-    private List<OrderItemDto> orderItems;
     private LocalDate orderDate;
     private double shippingFee;
+    private String shippingUnit;
     private Order.Status orderStatus;
     private Order.Payment ordrePayment;
+    private List<OrderItemDto> orderItems;
 
     public static OrderDto fromEntity(Order order) {
         return OrderDto.builder()

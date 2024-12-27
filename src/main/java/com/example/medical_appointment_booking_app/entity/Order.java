@@ -30,6 +30,8 @@ public class Order {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
+    private String shippingUnit;
+
     private LocalDate orderDate;
 
     private Double totalPrice;

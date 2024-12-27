@@ -77,7 +77,9 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentMethod(form.getPaymentMethod());
         order.setStatus(Order.Status.PENDING);
         order.setPhone(form.getPhone());
+        order.setShippingUnit(form.getShippingUnit());
         order.setAddress(address);
+        order.setNote(form.getNote());
         order.setOrderDate(LocalDate.now());
         Double totalPrice = cartItems.stream()
                 .mapToDouble(cartItem -> cartItem.getQuantity() * cartItem.getPrice())
@@ -90,7 +92,6 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItems);
 
-        order.setTotalPrice(totalPrice);
         order.setShippingFee(shippingFee);
         order.setOrderItems(orderItems);
         orderRepository.save(order);

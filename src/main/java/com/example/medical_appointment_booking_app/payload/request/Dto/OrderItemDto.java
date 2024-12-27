@@ -10,10 +10,7 @@ import lombok.Data;
 public class OrderItemDto {
     private Long orderItemId;
     private String bookName;
-    private int height;
     private int weight;
-    private int length;
-    private int width;
     private int quantity;
     private double price;
 
@@ -21,7 +18,7 @@ public class OrderItemDto {
         return OrderItemDto.builder()
                 .orderItemId(orderItem.getOrderItemId())
                 .bookName(orderItem.getProduct().getProductName())
-                .length(orderItem.getProduct().getWeight())
+                .weight(orderItem.getProduct().getWeight())
                 .quantity(orderItem.getQuantity())
                 .price(orderItem.getPrice())
                 .build();
