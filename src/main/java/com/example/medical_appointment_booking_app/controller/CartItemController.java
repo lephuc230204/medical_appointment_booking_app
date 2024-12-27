@@ -18,12 +18,12 @@ public class CartItemController {
     private final CartItemService cartItemService;
 
     @PostMapping("/add/{productId}")
-    public ResponseEntity<ResponseData<String>> addCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
+    public ResponseEntity<ResponseData<CartItemDto>> addCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
         return ResponseEntity.ok(cartItemService.addCartItem(productId, cartItemForm));
     }
 
     @PostMapping("/remove/{productId}")
-    public ResponseEntity<ResponseData<String>> removeCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
+    public ResponseEntity<ResponseData<CartItemDto>> removeCartItem(@Valid @PathVariable Long productId, @RequestBody CartItemForm cartItemForm){
         return ResponseEntity.ok(cartItemService.removeCartItem(productId, cartItemForm));
     }
 

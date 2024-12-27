@@ -3,6 +3,7 @@ package com.example.medical_appointment_booking_app.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 @Data
@@ -17,10 +18,6 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartItemId;
 
-    private int quantity;
-
-    private double price;
-
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -28,5 +25,12 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
+
+    private int quantity;
+
+    private double price;
+
+    private LocalDate createDate;
+
 
 }

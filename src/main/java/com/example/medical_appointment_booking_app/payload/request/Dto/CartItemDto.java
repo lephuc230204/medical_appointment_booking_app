@@ -27,6 +27,8 @@ public class CartItemDto {
                 .productName(cartItem.getProduct().getProductName())
                 .productPrice(cartItem.getPrice())
                 .quantity(cartItem.getQuantity())
+                .image(cartItem.getProduct().getImage())
+                .createDate(cartItem.getCreateDate())
                 .build();
     }
 }

@@ -9,9 +9,9 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface CartItemService {
-    ResponseData<String> addCartItem(Long productId, CartItemForm cartItemForm);
+    ResponseData<CartItemDto> addCartItem(Long productId, CartItemForm cartItemForm);
 
-    ResponseData<String> removeCartItem(Long productId, CartItemForm cartItemForm);
+    ResponseData<CartItemDto> removeCartItem(Long productId, CartItemForm cartItemForm);
 
     ResponseData<String> deleteCartItem(Long cartItemId);
 
