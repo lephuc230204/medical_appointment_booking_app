@@ -1,5 +1,8 @@
 package com.example.medical_appointment_booking_app.controller;
 
+import com.example.medical_appointment_booking_app.payload.request.Dto.AddressDto;
+import com.example.medical_appointment_booking_app.payload.request.Form.AddressForm;
+import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,10 @@ import java.util.Map;
 public class AddressController {
     @Autowired
     private AddressService addressService;
+    @PostMapping("")
+    public ResponseEntity<ResponseData<AddressDto>> createAddress(@RequestBody AddressForm form) {
+        return ResponseEntity.ok(addressService.createAddress(form));
+    }
 
     // Endpoint lấy danh sách tỉnh/thành phố
     @GetMapping("/provinces")
