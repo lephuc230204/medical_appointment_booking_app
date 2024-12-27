@@ -16,6 +16,7 @@ public class ProductDto {
     private int quantity;
     private int currentQuantity;
     private double price;
+    private int weight;
     private String description;
 
     public static ProductDto fromEntity(Product product) {
@@ -27,6 +28,7 @@ public class ProductDto {
                 .quantity(product.getQuantity())
                 .currentQuantity(product.getCurrentQuantity())
                 .price(product.getPrice())
+                .weight(product.getWeight())
                 .description(product.getDescription())
                 .build();
     }
