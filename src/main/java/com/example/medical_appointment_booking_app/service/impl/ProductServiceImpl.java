@@ -32,9 +32,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseData<ProductDto> create(ProductForm form) throws IOException {
-        Category category = categoryService.checkOrCreateCategory(form.getCategoryName());
+        // Kiểm tra sản phẩm đã tồn tại trong cơ sở dữ liệu chưa
+        Product existingProduct = productRepository.findByProductNameAndCategoryName(form.getProductName(), form.getCategoryName()).orElse(null);
 
+        if (existingProduct != null) {
+            // Nếu sản phẩm đã tồn tại, tăng số lượng
+            existingProduct.setQuantity(existingProduct.getQuantity() + form.getQuantity());
+            existingProduct.setCurrentQuantity(existingProduct.getCurrentQuantity() + form.getQuantity());
+            productRepository.save(existingProduct);
+
+            return new ResponseData<>(200, "Updated product quantity successfully", ProductDto.fromEntity(existingProduct));
+        }
+
+        // Nếu sản phẩm chưa tồn tại, tiếp tục tạo sản phẩm mới
+        Category category = categoryService.checkOrCreateCategory(form.getCategoryName());
         String uploadedImagePath = null;
+
         if (form.getProductImage() != null && !form.getProductImage().isEmpty()) {
             Path uploadPath = Paths.get(System.getProperty("user.dir"), "public/upload/product");
 
@@ -47,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
             Path filePath = uploadPath.resolve(fileName);
             form.getProductImage().transferTo(filePath.toFile());
             uploadedImagePath = fileName; // Đường dẫn để lưu vào cơ sở dữ liệu
-        }else {
+        } else {
             log.warn("No image provided in the form.");
         }
 
@@ -58,11 +71,14 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(form.getQuantity())
                 .currentQuantity(form.getQuantity())
                 .price(form.getPrice())
+                .weight(form.getWeight())
                 .description(form.getDescription())
                 .build();
         productRepository.save(product);
+
         return new ResponseData<>(200, "Create new product successfully", ProductDto.fromEntity(product));
     }
+
 
     @Override
     public ResponseData<Page<ProductDto>> getProduct(int page, int size){
