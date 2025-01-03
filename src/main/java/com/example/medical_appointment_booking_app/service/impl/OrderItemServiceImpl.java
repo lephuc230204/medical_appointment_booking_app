@@ -6,6 +6,7 @@ import com.example.medical_appointment_booking_app.entity.OrderItem;
 import com.example.medical_appointment_booking_app.entity.Product;
 import com.example.medical_appointment_booking_app.payload.request.Dto.OrderItemDto;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
+import com.example.medical_appointment_booking_app.payload.response.ResponseError;
 import com.example.medical_appointment_booking_app.repository.OrderItemRepository;
 import com.example.medical_appointment_booking_app.repository.OrderRepository;
 import com.example.medical_appointment_booking_app.repository.ProductRepository;
@@ -79,6 +80,5 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         return new ResponseData<>(200, "Fetched order items for orderId " + orderId + " successfully", orderItemDtos);
     }
-
 
 }
