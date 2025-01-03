@@ -26,7 +26,7 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<?> createOrder(@RequestBody OrderForm form) {
         try {
-            ResponseData<?> response = orderService.create(form, form.getCartItemIds());
+            ResponseData<?> response = orderService.create(form);
             return ResponseEntity.status(response.getStatus()).body(response);
         } catch (Exception e) {
             log.error("Error creating order: {}", e.getMessage(), e);
