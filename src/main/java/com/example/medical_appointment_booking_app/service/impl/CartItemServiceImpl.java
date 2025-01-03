@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -105,8 +106,6 @@ public class CartItemServiceImpl implements CartItemService {
         }
     }
 
-
-
     @Override
     public ResponseData<CartItemDto> removeCartItem(Long productId, CartItemForm cartItemForm) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -146,8 +145,6 @@ public class CartItemServiceImpl implements CartItemService {
 
         return new ResponseData<>(200, "Cart item removed successfully", CartItemDto.toDto(cartItem));
     }
-
-
 
     @Override
     public ResponseData<String> deleteCartItem(Long cartItemId) {
@@ -226,6 +223,16 @@ public class CartItemServiceImpl implements CartItemService {
         log.info("All cart items deleted for user with email {}", email);
 
         return new ResponseData<>(200, "Cart items deleted successfully");
+    }
+
+    @Override
+    public Void deleleCartItem(List<CartItem> cartItems){
+        try {
+            cartItemRepository.deleteAll( cartItems);
+        }catch (Exception e){
+            log.error("Cart Item cannot be deleted", e);
+        }
+        return null;
     }
 
 }

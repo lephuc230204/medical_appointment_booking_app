@@ -1,5 +1,6 @@
 package com.example.medical_appointment_booking_app.service;
 
+import com.example.medical_appointment_booking_app.entity.CartItem;
 import com.example.medical_appointment_booking_app.payload.request.Dto.CartItemDto;
 import com.example.medical_appointment_booking_app.payload.request.Form.CartItemForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
@@ -18,4 +19,7 @@ public interface CartItemService {
     ResponseData<Page<CartItemDto>> getCartItems(int page, int size);
 
     ResponseData<String> deleteAllCartItems();
+
+    // Xoa cart item duoc chon
+    Void deleleCartItem(List<CartItem> cartItems);
 }
