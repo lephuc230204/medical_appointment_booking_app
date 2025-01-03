@@ -9,7 +9,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface OrderService {
-    ResponseData<OrderDto> create (OrderForm form, List<Long> cartItemIds);
+    ResponseData<OrderDto> create (OrderForm form);
 
     ResponseData<List<OrderDto>> getOrders(int page, int size);
 
