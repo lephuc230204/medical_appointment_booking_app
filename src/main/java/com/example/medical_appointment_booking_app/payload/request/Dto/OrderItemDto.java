@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class OrderItemDto {
     private Long orderItemId;
-    private String bookName;
+    private String productName;
     private int weight;
     private int quantity;
     private double price;
@@ -17,7 +17,7 @@ public class OrderItemDto {
     public static OrderItemDto fromEntity(OrderItem orderItem) {
         return OrderItemDto.builder()
                 .orderItemId(orderItem.getOrderItemId())
-                .bookName(orderItem.getProduct().getProductName())
+                .productName(orderItem.getProduct().getProductName())
                 .weight(orderItem.getProduct().getWeight())
                 .quantity(orderItem.getQuantity())
                 .price(orderItem.getPrice())
