@@ -11,7 +11,9 @@ public class OrderForm {
     private Order.Payment paymentMethod;
     private String phone;
     private String voucher;
-    private List<Long> cartItemIds;
+    private List<CartItemRequest> cartItems;
     private String shippingUnit;
     private String note;
 }
+
+
