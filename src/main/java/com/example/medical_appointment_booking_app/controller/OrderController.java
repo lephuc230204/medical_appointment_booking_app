@@ -9,6 +9,7 @@ import com.example.medical_appointment_booking_app.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +34,6 @@ public class OrderController {
             return ResponseEntity.status(500).body("Internal Server Error");
         }
     }
-// đang sửa
-//    @GetMapping("")
-//    public ResponseEntity<ResponseData<List<OrderDto>>> getAll(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        return ResponseEntity.ok(orderService.getOrders(page, size));
-//    }
 
     @GetMapping("me")
     public ResponseEntity<ResponseData<List<OrderDto>>> getMyOrders(Principal principal) {

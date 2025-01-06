@@ -142,13 +142,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseData<List<OrderDto>> getOrders(int page, int size) {
+    public ResponseData<Page<OrderDto>> getOrders(int page, int size) {
         log.info("Get Order list");
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable= PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAll(pageable);
-        List<OrderDto> data = orders.getContent().stream()
-                .map(OrderDto::fromEntity)
-                .collect(Collectors.toList());
+
+        Page<OrderDto> data = orders.map(OrderDto::fromEntity);
         return new ResponseData<>(200, "Get orders successfully", data);
     }
 

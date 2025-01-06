@@ -22,7 +22,9 @@ public class OpenAPIConfig {
     public GroupedOpenApi publicApi(@Value("${openapi.service.api-docs}") String apiDocs) {
         return GroupedOpenApi.builder()
                 .group(apiDocs) // /v3/api-docs/api-service
-                .packagesToScan("com.example.medical_appointment_booking_app.controller")
+                .packagesToScan("com.example.medical_appointment_booking_app.controller",
+                        "com.example.medical_appointment_booking_app.controller.admin",
+                        "com.example.medical_appointment_booking_app.controller.doctor")
                 .build();
     }
 
