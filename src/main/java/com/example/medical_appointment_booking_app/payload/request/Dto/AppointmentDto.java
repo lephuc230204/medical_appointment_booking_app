@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Builder
 @Data
 public class AppointmentDto {
@@ -14,6 +16,7 @@ public class AppointmentDto {
     private Long doctorId;
     private Long scheduleId;
     private String reason;
+    private LocalTime expectedTime;
     private Long appointmentNumber;
     private LocalDate createdAt;
     private LocalDate comeDate;
@@ -25,6 +28,7 @@ public class AppointmentDto {
                 .userId(appointment.getUser().getUserId())
                 .doctorId(appointment.getDoctor().getUserId())
                 .scheduleId(appointment.getSchedule().getScheduleId())
+                .expectedTime(appointment.getExpectedTime())
                 .reason(appointment.getReason())
                 .appointmentNumber(appointment.getAppointmentNumber())
                 .createdAt(appointment.getCreateDate())

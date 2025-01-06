@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @AllArgsConstructor
@@ -38,6 +39,8 @@ public class Appointment {
     private LocalDate createDate;
 
     private LocalDate comeDate;
+
+    private LocalTime expectedTime;
 
     @Enumerated(EnumType.STRING)
     private Status status;

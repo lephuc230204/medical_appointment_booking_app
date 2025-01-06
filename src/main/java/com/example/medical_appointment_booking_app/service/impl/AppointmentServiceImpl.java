@@ -61,6 +61,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(Appointment.Status.PENDING);
         appointment.setCome(false);
         appointment.setAppointmentNumber(dailyAppointmentStats.getTotalAppointments()+1);
+        appointment.setExpectedTime(schedule.getTimeSchedule().getAppointmentStart()
+                .plusMinutes(schedule.getAppointments().size() * 10));
         appointmentRepository.save(appointment);
 
         listAppointments.add(appointment);

@@ -34,7 +34,7 @@ public class Schedule {
     private Status status = Status.NOT_FULL;
 
     public boolean isFull(){
-        return appointments.size() >= 15;
+        return appointments.size() >= 12;
     }
 
     public void updateStatus() {
