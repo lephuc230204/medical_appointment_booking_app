@@ -8,6 +8,7 @@ import com.example.medical_appointment_booking_app.payload.request.Form.ProductF
 import com.example.medical_appointment_booking_app.payload.request.Form.TimeScheduleForm;
 import com.example.medical_appointment_booking_app.payload.request.Form.UserForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
+import com.example.medical_appointment_booking_app.payload.response.ResponseError;
 import com.example.medical_appointment_booking_app.service.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,12 +16,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Slf4j
 @Tag(name = "Admin Controller", description = "API quản lý dành cho admin")
 @RequiredArgsConstructor
 @RestController
@@ -37,6 +40,19 @@ public class AdminController {
     @GetMapping("/user")
     public ResponseEntity<Page<UserDto>> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getUsers(page, size));
+    }
+
+    @Operation(summary = "Xem chi tiet user", description = "API tra ve chi tiet account cua nguoi dung")
+    @GetMapping("users/{id}")
+    public ResponseEntity<ResponseData<UserDto>> getUser(@PathVariable Long id) {
+        log.info("getting user by id = "+id);
+        try{
+            userService.getUser(id);
+            return ResponseEntity.ok(userService.getUser(id));
+        }catch (Exception e){
+            log.error("errorMessage={}", e.getMessage(), e.getCause());
+            return ResponseEntity.badRequest().body(new ResponseError<>(400,"Get user by id was failed"));
+        }
     }
 
     @Operation(summary = "Tạo mới 1 người dùng", description = "API cho admin tạo mới 1 người dùng")
