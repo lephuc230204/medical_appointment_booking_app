@@ -19,4 +19,6 @@ public interface OrderService {
     ResponseData<OrderDto> getById(Long orderId);
 
     ResponseData<OrderDto> changeStatus(Long OrderId, String status );
+
+    ResponseData<OrderDto> cancelOrder(Long orderId);
 }

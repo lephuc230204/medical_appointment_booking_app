@@ -49,9 +49,9 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getById(orderId));
     }
 
-    @Operation( summary = "Cho phép thay đổi trạng thái đơn hàng (huỷ đơn)", description = "API cho phép người dùng huỷ đơn")
-    @PutMapping("/change-status/{orderId}")
-    public ResponseEntity<ResponseData<OrderDto>> changeStatus( @PathVariable Long orderId, @RequestParam String status){
-        return ResponseEntity.ok(orderService.changeStatus(orderId, status));
+    @Operation( summary = "Cho phép huỷ đơn", description = "API cho phép người dùng huỷ đơn")
+    @PutMapping("/cancle/{orderId}")
+    public ResponseEntity<ResponseData<OrderDto>> cancelOrder( @PathVariable Long orderId){
+        return ResponseEntity.ok(orderService.cancelOrder(orderId));
     }
 }

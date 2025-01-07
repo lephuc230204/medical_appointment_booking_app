@@ -191,4 +191,16 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
         return new ResponseData<>(200, "Order status updated successfully",OrderDto.fromEntity(order));
     }
+
+    @Override
+    public ResponseData<OrderDto> cancelOrder(Long orderId) {
+        log.info("Change OrderStatus by ID");
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+
+        order.setStatus(Order.Status.CANCELED);
+        orderRepository.save(order);
+
+        return new ResponseData<>(200, "Order status updated successfully",OrderDto.fromEntity(order));
+    }
 }
