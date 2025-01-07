@@ -6,6 +6,7 @@ import com.example.medical_appointment_booking_app.payload.request.Form.OrderFor
 import com.example.medical_appointment_booking_app.payload.request.Form.ProductForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
+    @Operation( summary = "Tạo 1 đơn hàng", description = "API cho phép người dùng Tạo 1 đơn hàng mới")
     @PostMapping("/create")
     public ResponseEntity<?> createOrder(@RequestBody OrderForm form) {
         try {
@@ -35,16 +37,19 @@ public class OrderController {
         }
     }
 
+    @Operation( summary = "Xem tất cả đơn hàng của bạn", description = "API cho phép người dùng Xem tất cả đơn hàng của họ")
     @GetMapping("me")
     public ResponseEntity<ResponseData<List<OrderDto>>> getMyOrders(Principal principal) {
         return ResponseEntity.ok(orderService.getMyOrder(principal));
     }
 
+    @Operation( summary = "Xem 1 đơn hàng cụ thể ", description = "API cho phép người dùng xem 1 đơn hàng cụ thể")
     @GetMapping("/{orderId}")
     public ResponseEntity<ResponseData<OrderDto>> getById( @PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getById(orderId));
     }
 
+    @Operation( summary = "Cho phép thay đổi trạng thái đơn hàng (huỷ đơn)", description = "API cho phép người dùng huỷ đơn")
     @PutMapping("/change-status/{orderId}")
     public ResponseEntity<ResponseData<OrderDto>> changeStatus( @PathVariable Long orderId, @RequestParam String status){
         return ResponseEntity.ok(orderService.changeStatus(orderId, status));

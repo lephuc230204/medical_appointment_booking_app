@@ -3,6 +3,7 @@ package com.example.medical_appointment_booking_app.controller;
 import com.example.medical_appointment_booking_app.payload.request.Dto.UserDto;
 import com.example.medical_appointment_booking_app.payload.request.Form.UserForm;
 import com.example.medical_appointment_booking_app.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("")
-    public ResponseEntity<Page<UserDto>> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        return ResponseEntity.ok(userService.getUsers(page,size));
-    }
-    @PostMapping("")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserForm form){
-        return ResponseEntity.ok(userService.createUser(form));
-    }
+//    @Operation( summary = "bác sĩ chọn ca làm việc", description = "API cho phép bác sĩ chọn ca làm việc")
+//    @GetMapping("")
+//    public ResponseEntity<Page<UserDto>> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+//        return ResponseEntity.ok(userService.getUsers(page,size));
+//    }
+//    @PostMapping("")
+//    public ResponseEntity<UserDto> createUser(@RequestBody UserForm form){
+//        return ResponseEntity.ok(userService.createUser(form));
+//    }
 }

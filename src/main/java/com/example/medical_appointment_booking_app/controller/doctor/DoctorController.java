@@ -5,6 +5,7 @@ import com.example.medical_appointment_booking_app.payload.response.ResponseData
 import com.example.medical_appointment_booking_app.service.ScheduleService;
 import com.example.medical_appointment_booking_app.service.TimeScheduleService;
 import com.example.medical_appointment_booking_app.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ public class DoctorController {
     private ScheduleService scheduleService;
 
 
-    //bác sĩ chọn ca trực dựa vào lich đã được tạo (timeScheduleId)
+    @Operation( summary = "bác sĩ chọn ca làm việc", description = "API cho phép bác sĩ chọn ca làm việc")
     @PostMapping("/{timeScheduleId}")
     public ResponseEntity<ResponseData<String>> createSchedule(
             Principal principal,

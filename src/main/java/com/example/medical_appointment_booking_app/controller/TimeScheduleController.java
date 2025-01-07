@@ -6,6 +6,7 @@ import com.example.medical_appointment_booking_app.payload.request.Dto.TimeSched
 import com.example.medical_appointment_booking_app.payload.request.Form.TimeScheduleForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.service.TimeScheduleService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,7 @@ import java.util.List;
 public class TimeScheduleController {
     private final TimeScheduleService timeScheduleService;
 
-    @PostMapping
-    public ResponseEntity<ResponseData<String>> createTimeSchedule(@RequestBody TimeScheduleForm form) {
-        return ResponseEntity.ok(timeScheduleService.createTimeSchedule(form));
-    }
-
+    @Operation( summary = "Lấy tất cả các ca làm việc trong ngày", description = "API cho phép người dùng xem thời gian làm việc của bác sĩ trong ngày ")
     @GetMapping("/get-by-date")
     public ResponseEntity<ResponseData<List<TimeScheduleDto>>> getAllTimeSchedules(@RequestParam LocalDate date) {
         return ResponseEntity.ok(timeScheduleService.getByDate(date));
