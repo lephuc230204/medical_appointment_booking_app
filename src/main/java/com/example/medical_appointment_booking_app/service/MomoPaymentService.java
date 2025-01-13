@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +20,6 @@ import org.slf4j.LoggerFactory;
 public class MomoPaymentService {
 
     private static final Logger logger = LoggerFactory.getLogger(MomoPaymentService.class);
-
     @Value("${momo.partnerCode}")
     private String partnerCode;
 
@@ -41,22 +42,35 @@ public class MomoPaymentService {
         }
 
         try {
-            // Tạo chữ ký và body yêu cầu
+            // Tạo requestId duy nhất bằng thời gian hiện tại
             String requestId = String.valueOf(System.currentTimeMillis());
             String extraData = ""; // Không sử dụng dữ liệu bổ sung
-            String rawHash = "partnerCode=" + partnerCode +
-                    "&accessKey=" + accessKey +
-                    "&requestId=" + requestId +
+
+            String encodedNotifyUrl = URLEncoder.encode(notifyUrl, StandardCharsets.UTF_8);
+            String encodedReturnUrl = URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);
+
+            String rawData = "accessKey=" + accessKey +
                     "&amount=" + amount +
+                    "&extraData=" + extraData +
+                    "&ipnUrl=" + encodedNotifyUrl +
                     "&orderId=" + orderId +
                     "&orderInfo=" + orderInfo +
-                    "&returnUrl=" + returnUrl +
-                    "&notifyUrl=" + notifyUrl +
-                    "&extraData=" + extraData;
+                    "&partnerCode=" + partnerCode +
+                    "&redirectUrl=" + encodedReturnUrl +
+                    "&requestId=" + requestId +
+                    "&requestType=captureWallet";
 
-            String signature = HmacSHA256Utils.generateHmacSHA256(rawHash, secretKey);
+
+// Log rawData để kiểm tra
+            logger.debug("Raw data before signing: {}", rawData);
+
+// Tạo chữ ký HMAC
+            String signature = HmacSHA256Utils.generateHMACSHA256(rawData, secretKey);
+
             logger.debug("Generated signature: {}", signature);
 
+
+            // Tạo request body
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("partnerCode", partnerCode);
             requestBody.put("accessKey", accessKey);
@@ -64,8 +78,8 @@ public class MomoPaymentService {
             requestBody.put("amount", amount);
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", orderInfo);
+            requestBody.put("ipnUrl", notifyUrl);
             requestBody.put("returnUrl", returnUrl);
-            requestBody.put("notifyUrl", notifyUrl); // Đảm bảo notifyUrl không trống
             requestBody.put("extraData", extraData);
             requestBody.put("requestType", "captureWallet");
             requestBody.put("signature", signature);
@@ -92,6 +106,7 @@ public class MomoPaymentService {
             return null;
         }
     }
+
 
 
 }

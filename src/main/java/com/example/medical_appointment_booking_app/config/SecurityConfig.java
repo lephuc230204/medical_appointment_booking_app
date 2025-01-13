@@ -31,6 +31,8 @@ public class SecurityConfig {
 
     private static final String[] WHITELISTED_USER = {
             "/api/v1/auth/**",
+            "/api/v1/notify",
+            "/api/v1/return",
             "/upload/**",
             "/ws/chat/**",
             "/v2/api-docs",

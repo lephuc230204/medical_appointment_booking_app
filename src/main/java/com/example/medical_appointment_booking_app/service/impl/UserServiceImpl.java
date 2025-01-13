@@ -2,10 +2,12 @@ package com.example.medical_appointment_booking_app.service.impl;
 
 import com.example.medical_appointment_booking_app.entity.Role;
 import com.example.medical_appointment_booking_app.entity.User;
+import com.example.medical_appointment_booking_app.exception.UserNotFoundException;
 import com.example.medical_appointment_booking_app.payload.request.Dto.UserBasicDto;
 import com.example.medical_appointment_booking_app.payload.request.Dto.UserDto;
 import com.example.medical_appointment_booking_app.payload.request.Form.UserForm;
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
+import com.example.medical_appointment_booking_app.payload.response.ResponseError;
 import com.example.medical_appointment_booking_app.repository.RoleRepository;
 import com.example.medical_appointment_booking_app.repository.UserRepository;
 import com.example.medical_appointment_booking_app.service.UserService;
@@ -56,16 +58,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseData<UserDto> getUser(Long id){
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return new ResponseData<>(200,"Get user success with id: "+id, UserDto.toDto(user));
+    public ResponseData<UserDto> getUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+
+        return new ResponseData<>(200, "Get user success with id: " + id, UserDto.toDto(user));
     }
 
     @Override
     public ResponseData<UserBasicDto> getMyInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return new ResponseData<>(200,"Get user success with email: "+email, UserBasicDto.fromUser(user));
     }

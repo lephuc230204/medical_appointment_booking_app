@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +25,6 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ResponseData<UserBasicDto>> getMyInfo(){
         log.info("getMyInfo");
-        try{
-            userService.getMyInfo();
-            return ResponseEntity.ok(userService.getMyInfo());
-        }catch (Exception e){
-            log.error("errorMessage={}", e.getMessage(), e.getCause());
-            return ResponseEntity.badRequest().body(new ResponseError<>(400,"Get info was failed"));
-        }
-
+        return ResponseEntity.ok(userService.getMyInfo());
     }
 }

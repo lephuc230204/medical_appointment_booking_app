@@ -1,5 +1,6 @@
 package com.example.medical_appointment_booking_app.controller.admin;
 
+import com.example.medical_appointment_booking_app.exception.UserNotFoundException;
 import com.example.medical_appointment_booking_app.payload.request.Dto.CartDto;
 import com.example.medical_appointment_booking_app.payload.request.Dto.OrderDto;
 import com.example.medical_appointment_booking_app.payload.request.Dto.ProductDto;
@@ -18,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,33 +39,26 @@ public class AdminController {
     private final CartService cartService;
 
     @Operation(summary = "Lấy danh sách người dùng", description = "API trả về danh sách người dùng với phân trang. Mặc định là trang đầu tiên với 10 người dùng.")
-    @GetMapping("/user")
+    @GetMapping("/users")
     public ResponseEntity<Page<UserDto>> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(userService.getUsers(page, size));
     }
 
-    @Operation(summary = "Xem chi tiet user", description = "API tra ve chi tiet account cua nguoi dung")
-    @GetMapping("users/{id}")
-    public ResponseEntity<ResponseData<UserDto>> getUser(@PathVariable Long id) {
-        log.info("getting user by id = "+id);
-        try{
-            userService.getUser(id);
-            return ResponseEntity.ok(userService.getUser(id));
-        }catch (Exception e){
-            log.error("errorMessage={}", e.getMessage(), e.getCause());
-            return ResponseEntity.badRequest().body(new ResponseError<>(400,"Get user by id was failed"));
-        }
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+        log.info("Getting user by id = {}", id);
+        return ResponseEntity.ok(userService.getUser(id));
     }
 
     @Operation(summary = "Tạo mới 1 người dùng", description = "API cho admin tạo mới 1 người dùng")
     @PostMapping("")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserForm form){
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserForm form){
         return ResponseEntity.ok(userService.createUser(form));
     }
 
     @Operation(summary = "Tạo thời gian khám bệnh", description = "API cho phép admin tạo thời gian để bác sĩ khám bệnh dựa trên thông tin từ form nhập vào.")
     @PostMapping("/time-schedule")
-    public ResponseEntity<ResponseData<String>> createTimeSchedule(@RequestBody TimeScheduleForm form) {
+    public ResponseEntity<ResponseData<String>> createTimeSchedule(@RequestBody @Valid TimeScheduleForm form) {
         return ResponseEntity.ok(timeScheduleService.createTimeSchedule(form));
     }
 
