@@ -31,8 +31,8 @@ public class SecurityConfig {
 
     private static final String[] WHITELISTED_USER = {
             "/api/v1/auth/**",
-            "/api/v1/notify",
-            "/api/v1/return",
+            "/api/v1/ipn",
+            "/api/v1/redirect",
             "/upload/**",
             "/ws/chat/**",
             "/v2/api-docs",
@@ -71,7 +71,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfig.setAllowedOrigins(List.of("http://localhost:3000", " https://*.loca.lt", " https:*.ngrok-free.app"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         corsConfig.setAllowCredentials(true);

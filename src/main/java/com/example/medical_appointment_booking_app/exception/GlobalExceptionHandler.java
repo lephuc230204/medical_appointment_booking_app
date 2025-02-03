@@ -48,4 +48,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseError<>(500, "Internal server error"));
     }
 
+    // Xử lí ngoại lệ payment
+    @ExceptionHandler(MomoExeption.class)
+    public ResponseEntity<ResponseError<Object>> handleMomoException(MomoExeption ex) {
+        ResponseError<Object> errorResponse = new ResponseError<>(500, ex.getMessage());
+        log.error("Thanh toan that bai: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
 }
