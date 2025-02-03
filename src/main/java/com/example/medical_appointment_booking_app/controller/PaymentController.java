@@ -1,42 +1,29 @@
 package com.example.medical_appointment_booking_app.controller;
 
+
+import com.example.medical_appointment_booking_app.payload.request.Form.MomoRequest;
 import com.example.medical_appointment_booking_app.service.MomoPaymentService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/api/v1/momo")
 @RestController
-@RequestMapping("api/v1/payment")
 public class PaymentController {
-
     @Autowired
-    private MomoPaymentService momoPaymentService;
+    private MomoPaymentService momoService;
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createPayment(@RequestParam(required = true) Long orderId,
-                                                @RequestParam(required = true) String orderInfo,
-                                                @RequestParam(required = true) long amount) {
+    @Operation(summary = "Thanh toán MOMO", description = "Nhận so tien va thuc hien goi api toi momo de lay ve link QR thanh toan")
+    @PostMapping()
+    public ResponseEntity<String> testPayment(@RequestBody MomoRequest paymentRequest) {
+        return ResponseEntity.ok(momoService.createPaymentRequest(paymentRequest.getAmount()));
 
-        if (orderId == null || orderInfo == null || orderInfo.isBlank() || amount <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tham số đầu vào không hợp lệ!");
-        }
+    }
 
-        try {
-            String returnUrl = "https://2056-1-52-111-143.ngrok-free.app/api/v1/return";
-            String notifyUrl = "https://2056-1-52-111-143.ngrok-free.app/api/v1/notify";
-
-            // Gọi service để tạo URL thanh toán
-            String paymentUrl = momoPaymentService.createPaymentRequest(orderId, orderInfo, amount, returnUrl, notifyUrl);
-
-            if (paymentUrl != null) {
-                return ResponseEntity.ok("Vui lòng thanh toán qua đường link sau: " + paymentUrl);
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi xảy ra trong quá trình tạo liên kết thanh toán!");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Hệ thống gặp lỗi, vui lòng thử lại sau!");
-        }
+    @GetMapping("/order-status/{orderId}")
+    public String checkPaymentStatus(@PathVariable String orderId) {
+        String response = momoService.checkPaymentStatus(orderId);
+        return response;
     }
 }
-

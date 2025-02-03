@@ -1,114 +1,154 @@
 package com.example.medical_appointment_booking_app.service;
 
-import com.example.medical_appointment_booking_app.config.HmacSHA256Utils;
+
+import com.example.medical_appointment_booking_app.exception.MomoExeption;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
-import java.net.URLEncoder;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
+import org.json.JSONObject;
 
 @Service
 public class MomoPaymentService {
-
-    private static final Logger logger = LoggerFactory.getLogger(MomoPaymentService.class);
     @Value("${momo.partnerCode}")
-    private String partnerCode;
-
+    String PARTNER_CODE;
     @Value("${momo.accessKey}")
-    private String accessKey;
-
+    String ACCESS_KEY;
     @Value("${momo.secretKey}")
-    private String secretKey;
-
+    String SECRET_KEY;
+    @Value("${momo.ipnUrl}")
+    String IPN_URL;
+    @Value("${momo.redirectUrl}")
+    String REDIRECT_URL;
     @Value("${momo.endpoint}")
-    private String endpoint;
+    String END_POINT_URL;
 
-    public String createPaymentRequest(Long orderId, String orderInfo, long amount, String returnUrl, String notifyUrl) {
-        logger.info("Creating payment request for Order ID: {}", orderId);
 
-        // Kiểm tra notifyUrl không được để trống
-        if (notifyUrl == null || notifyUrl.isBlank()) {
-            logger.error("notifyUrl must not be null or blank.");
-            throw new IllegalArgumentException("notifyUrl must not be null or blank.");
-        }
+    private static final String REQUEST_TYPE = "captureWallet";
 
+    public String createPaymentRequest(String amount) {
         try {
-            // Tạo requestId duy nhất bằng thời gian hiện tại
-            String requestId = String.valueOf(System.currentTimeMillis());
-            String extraData = ""; // Không sử dụng dữ liệu bổ sung
+            // Generate requestId and orderId
+            String requestId = PARTNER_CODE + new Date().getTime();
+            String orderId = requestId;
+            String orderInfo = "Youmed Shop";
+            String extraData = "";
 
-            String encodedNotifyUrl = URLEncoder.encode(notifyUrl, StandardCharsets.UTF_8);
-            String encodedReturnUrl = URLEncoder.encode(returnUrl, StandardCharsets.UTF_8);
+            // Generate raw signature
+            String rawSignature = String.format(
+                    "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
+                    ACCESS_KEY, amount, extraData, IPN_URL, orderId, orderInfo, PARTNER_CODE, REDIRECT_URL,
+                    requestId, REQUEST_TYPE);
 
-            String rawData = "accessKey=" + accessKey +
-                    "&amount=" + amount +
-                    "&extraData=" + extraData +
-                    "&ipnUrl=" + encodedNotifyUrl +
-                    "&orderId=" + orderId +
-                    "&orderInfo=" + orderInfo +
-                    "&partnerCode=" + partnerCode +
-                    "&redirectUrl=" + encodedReturnUrl +
-                    "&requestId=" + requestId +
-                    "&requestType=captureWallet";
+            // Sign with HMAC SHA256
+            String signature = signHmacSHA256(rawSignature, SECRET_KEY);
+            System.out.println("Generated Signature: " + signature);
 
-
-// Log rawData để kiểm tra
-            logger.debug("Raw data before signing: {}", rawData);
-
-// Tạo chữ ký HMAC
-            String signature = HmacSHA256Utils.generateHMACSHA256(rawData, secretKey);
-
-            logger.debug("Generated signature: {}", signature);
-
-
-            // Tạo request body
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("partnerCode", partnerCode);
-            requestBody.put("accessKey", accessKey);
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("partnerCode", PARTNER_CODE);
+            requestBody.put("accessKey", ACCESS_KEY);
             requestBody.put("requestId", requestId);
             requestBody.put("amount", amount);
             requestBody.put("orderId", orderId);
             requestBody.put("orderInfo", orderInfo);
-            requestBody.put("ipnUrl", notifyUrl);
-            requestBody.put("returnUrl", returnUrl);
+            requestBody.put("redirectUrl", REDIRECT_URL);
+            requestBody.put("ipnUrl", IPN_URL);
             requestBody.put("extraData", extraData);
-            requestBody.put("requestType", "captureWallet");
+            requestBody.put("requestType", REQUEST_TYPE);
             requestBody.put("signature", signature);
+            requestBody.put("lang", "en");
 
-            // Gửi request
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Map> response = restTemplate.postForEntity(endpoint, requestBody, Map.class);
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(END_POINT_URL);
+            httpPost.setHeader("Content-Type", "application/json");
+            httpPost.setEntity(new StringEntity(requestBody.toString(), StandardCharsets.UTF_8));
 
-            // Kiểm tra phản hồi
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody != null && responseBody.containsKey("payUrl")) {
-                return (String) responseBody.get("payUrl");
-            } else {
-                String resultCode = responseBody != null ? (String) responseBody.get("resultCode") : "null";
-                String message = responseBody != null ? (String) responseBody.get("message") : "No message";
-                logger.error("MoMo API returned error: resultCode={}, message={}", resultCode, message);
-                return null;
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                System.out.println("Response from MoMo: " + result.toString());
+                return result.toString();
             }
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            logger.error("HTTP Error: {}", e.getResponseBodyAsString(), e);
-            return null;
         } catch (Exception e) {
-            logger.error("An error occurred: {}", e.getMessage(), e);
-            return null;
+            e.printStackTrace();
+            throw new MomoExeption("Failed to create payment request: " + e.getMessage());
         }
     }
 
+    // HMAC SHA256 signing method
+    private static String signHmacSHA256(String data, String key) throws Exception {
+        Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
+        SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        hmacSHA256.init(secretKey);
+        byte[] hash = hmacSHA256.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1)
+                hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
 
+    public String checkPaymentStatus(String orderId) {
+        try {
+            // Generate requestId
+            String requestId = PARTNER_CODE + new Date().getTime();
+
+            // Generate raw signature for the status check
+            String rawSignature = String.format(
+                    "accessKey=%s&orderId=%s&partnerCode=%s&requestId=%s",
+                    ACCESS_KEY, orderId, PARTNER_CODE, requestId);
+
+            // Sign with HMAC SHA256
+            String signature = signHmacSHA256(rawSignature, SECRET_KEY);
+            System.out.println("Generated Signature for Status Check: " + signature);
+
+            // Prepare request body
+            JSONObject requestBody = new JSONObject();
+            requestBody.put("partnerCode", PARTNER_CODE);
+            requestBody.put("accessKey", ACCESS_KEY);
+            requestBody.put("requestId", requestId);
+            requestBody.put("orderId", orderId);
+            requestBody.put("signature", signature);
+            requestBody.put("lang", "en");
+
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost("https://test-payment.momo.vn/v2/gateway/api/query");
+            httpPost.setHeader("Content-Type", "application/json");
+            httpPost.setEntity(new StringEntity(requestBody.toString(), StandardCharsets.UTF_8));
+
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                System.out.println("Response from MoMo (Status Check): " + result.toString());
+                return result.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MomoExeption("Failed to create payment request: " + e.getMessage());
+        }
+    }
 
 }
-
-
