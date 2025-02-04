@@ -13,4 +13,5 @@ public interface TimeScheduleRepository extends JpaRepository<TimeSchedule, Long
     boolean existsByAppointmentDate(LocalDate appointmentDate);
     Optional<TimeSchedule> findByAppointmentDate(LocalDate appointmentDate);
     List<TimeSchedule> findAllByAppointmentDate(LocalDate appointmentDate);
+    List<TimeSchedule> findByAppointmentDateBetween(LocalDate startDate, LocalDate endDate);
 }

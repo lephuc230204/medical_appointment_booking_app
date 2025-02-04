@@ -7,6 +7,7 @@ import com.example.medical_appointment_booking_app.payload.request.Form.TimeSche
 import com.example.medical_appointment_booking_app.payload.response.ResponseData;
 import com.example.medical_appointment_booking_app.repository.DailyAppointmentStatsRepository;
 import com.example.medical_appointment_booking_app.repository.TimeScheduleRepository;
+import com.example.medical_appointment_booking_app.repository.UserRepository;
 import com.example.medical_appointment_booking_app.service.TimeScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,8 @@ public class TimeScheduleServiceImpl implements TimeScheduleService {
     private TimeScheduleRepository timeScheduleRepository;
     @Autowired
     private DailyAppointmentStatsRepository dailyAppointmentStatsRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public ResponseData<String> createTimeSchedule(TimeScheduleForm form) {
