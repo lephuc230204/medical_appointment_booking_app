@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,15 +98,28 @@ public class ScheduleServiceImpl implements ScheduleService {
             return new ResponseData<>(200, "No schedules found for the given doctor and week", null);
         }
 
-        // Nhóm danh sách Schedule theo từng ngày
-        List<TableTimeDto> tableTimeDtos = timeSchedules.stream()
-                .map(timeSchedule -> TableTimeDto.builder()
-                        .date(timeSchedule.getAppointmentDate())
-                        .schedules(timeSchedule.getSchedules().stream()
-                                .filter(schedule -> schedule.getUser().getUserId().equals(user.getUserId())) // Lọc đúng bác sĩ
-                                .map(ScheduleDto::toDto)
-                                .collect(Collectors.toList()))
-                        .build())
+        // Nhóm các TimeSchedule theo ngày
+        Map<LocalDate, List<TimeSchedule>> groupedByDate = timeSchedules.stream()
+                .collect(Collectors.groupingBy(TimeSchedule::getAppointmentDate));
+
+        // Tạo danh sách TableTimeDto từ các nhóm đã gộp
+        List<TableTimeDto> tableTimeDtos = groupedByDate.entrySet().stream()
+                .map(entry -> {
+                    LocalDate date = entry.getKey();
+                    List<TimeSchedule> schedulesForDate = entry.getValue();
+
+                    // Lấy tất cả Schedule của bác sĩ trong các TimeSchedule cùng ngày
+                    List<ScheduleDto> scheduleDtos = schedulesForDate.stream()
+                            .flatMap(timeSchedule -> timeSchedule.getSchedules().stream())
+                            .filter(schedule -> schedule.getUser().getUserId().equals(user.getUserId())) // Lọc đúng bác sĩ
+                            .map(ScheduleDto::toDto)
+                            .collect(Collectors.toList());
+
+                    return TableTimeDto.builder()
+                            .date(date)
+                            .schedules(scheduleDtos)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         return new ResponseData<>(200, "Get successfully", tableTimeDtos);
